@@ -1,14 +1,11 @@
-# GasOps Routesheet AI Backend - Fabric
+# GasOps Transmission AI Backend - Fabric
 # Overview
 FastAPI-based backend service for GasOps Transmission AI, providing intelligent and conversational natural language query processing using Azure and Fabric.
 
 # Prerequisites
 - Python 3.12.5 
-- az login in the terminal before running backend code (this is required to connect to Fabric   Warehouse)
-- Download ODBC Driver 18 SQL Server
 - Azure CLI (for Docker deployment) 
 - Docker (for containerized deployment)
-
 
 # Local Development Setup ( Windows)
 1. Create Python Virtual Environment

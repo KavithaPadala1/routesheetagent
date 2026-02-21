@@ -1,0 +1,36 @@
+.audio-recorder {
+    display: flex;
+    align-items: center;
+  }
+  
+  .icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .mic-button {
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+    transition: background-color 0.3s;
+  }
+  
+  .mic-button:hover {
+    background-color: #e3f2fd;
+  }
+  
+  .stop-button {
+    color: white;
+    border-radius: 5px;
+    padding: 10px;
+    transition: background-color 0.3s;
+  }
+  
+  .stop-button:hover {
+    background-color: #083b7b;
+  }
+  

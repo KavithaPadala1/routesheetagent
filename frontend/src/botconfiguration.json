@@ -1,0 +1,79 @@
+{
+    "chatbotHeader": {
+        "title": "Ask MIHU",
+        "description": "Ask me Anything",
+        "closeButton": {
+            "text": ""
+        }
+    },
+    "apiUrl": "http://127.0.0.1:8000/appointments/get-response",
+    "amaapiUrl": "http://127.0.0.1:8000/appointments/get-response",
+    "otpapiUrl": "http://127.0.0.1:8000/otp/verify-otp",
+    "initialMessages": [
+        {
+            "type": "incoming",
+            "text": ["Hi there, Welcome To GasOps Bot👋"],
+            "format": "text",
+            "options": [],
+            "disabled": true,
+            "actions": [{ "id": "requestcallback", "text": "Request a Callback", "question": "", "answer":"" }]
+        },
+        {
+            "type": "outgoing",
+            "text": ["Send Details?"],
+            "format": "userDetails",
+            "options": [],
+            "actions": [{ "id": "requestcallback", "text": "Request a Callback", "question": "", "answer":"" }]
+        }
+    ],
+    "icons": {
+        "botIcon": {
+            "name": "fluent:bot-sparkle-24-filled",
+            "style": {
+                "fontSize": 30,
+                "color": "#0363b5",
+                "backgroundColor": "white",
+                "opacity":1
+            }
+        },
+        "userIcon": {
+            "name": "mingcute:user-2-fill",
+            "style": {
+                "fontSize": 20,
+                "color": "#0363b5",
+                "opacity":0.9
+            }
+        },
+        "sendButtonIcon": {
+            "name": "iconamoon:send-duotone",
+            "style": {
+                "fontSize": 24,
+                "color": "#fff"
+            }
+        },
+        "playButtonIcon": {
+            "name": "gravity-ui:play-fill",
+            "style": {
+                "fontSize": 20,
+                "color": "#ffffff"
+            }
+        },
+        "pauseButtonIcon": {
+            "name": "carbon:pause-filled",
+            "style": {
+                "fontSize": 20,
+                "color": "#ffffff"
+            }
+        }
+    },
+    "colors": {
+        "primaryColor": "#48009F",
+        "secondaryColor": "#ED803A",
+        "backgroundColor": "#efede7",
+        "whiteColor": "#fff",
+        "blackColor": "#000",
+        "greyColor": "#ccc",
+        "errorBgColor": "#f8d7da",
+        "errorTextColor": "#721c24"
+    }
+}

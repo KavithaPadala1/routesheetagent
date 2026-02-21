@@ -1,0 +1,143 @@
+Routesheet SCHEMA:
+
+ROUTE SHEET TYPES:
+- Gas Operations Route Sheet: cedemo_RouteSheetHeader, cedemo_RouteSheetTicketDetails, cedemo_RSAssignedEmployeeDetails, cedemo_RSLeaveEmployeeDetails
+- CM Route Sheet: cedemo_ContractorRouteSheetTicketDetails, cedemo_ContractorRSAssignedEmployeeDetails
+- Tunnels Route Sheet: cedemo_TunnelsRouteSheetHeader, cedemo_TunnelsRSAssignedEmployeeDetails, cedemo_TunnelsRSLeaveEmployeeDetails
+- Second Inspector Route Sheet: (no tables defined yet)
+- Corrosion Route Sheet: cedemo_CorrosionRouteSheetHeader, cedemo_CorrosionRSAssignedEmployeeDetails, cedemo_CorrosionRSLeaveEmployeeDetails
+- Leak Survey Route Sheet: cedemo_ContractorsLeakSurveyEmployeeScheduleDetails
+- SLI Route Sheet: cedemo_CompanySLIEmployeeScheduleDetails, cedemo_ContractorsSLIEmployeeScheduleDetails, cedemo_ContractorsMLRSLIEmployeeScheduleDetails
+
+---
+
+## TYPE: Gas Operations Route Sheet
+
+TABLE : cedemo_RouteSheetHeader
+Description: Stores header-level information for each route sheet, including scheduling details, assigned personnel, contact information, and status tracking.
+Columns:
+- RouteSheetID (bigint): Unique identifier for the route sheet record.
+- RouteSheetDate (datetime2): Date and time associated with the route sheet.
+- RouteSheetDay (varchar): Day of the week for the route sheet.It can have Mon,Monday,Tue,Tuesday,Wed,Wednesday,Thu,Thursday,Fri,Friday,Sat,Saturday,Sun,Sunday
+- Shift (varchar): Shift designation for the route sheet. It can have Night,Day,Midnight
+- Region (varchar): Region associated with the route sheet. It can have 'X' , 'M' , 'Q' , and 'W'.
+- District (varchar): District within the region for the route sheet.
+- SectionManagerID (bigint): Identifier of the section manager assigned to the route sheet.
+- ManagerPhone (varchar): Phone number of the section manager.
+- FieldOperationsPlannerID (bigint): Identifier of the field operations planner assigned to the route sheet.
+- PlannerPhone (varchar): Phone number of the field operations planner.
+- OperatingSupervisorID (bigint): Identifier of the operating supervisor assigned to the route sheet.
+- SupervisorPhone (varchar): Phone number of the operating supervisor.
+- Gerc (varchar):
+- EHSHotline (varchar):
+- RouteSheetStatus (varchar): Current status of the route sheet.It can have Submitted, NULL
+- IsActive (bit): Indicates whether the route sheet record is active. Always consider IsActive=1
+- CreatedBy (int): Identifier of the user who created the record.
+- CreatedDate (datetime2): Date and time when the record was created.
+- ModifiedBy (int): Identifier of the user who last modified the record.
+- ModifiedDate (datetime2): Date and time when the record was last modified.
+- AdditonalNotes (varchar): Additional Notes
+
+TABLE : cedemo_RouteSheetTicketDetails
+Description: Stores ticket-level details associated with a route sheet, including work order information, inspection assignments, second inspector tracking, and operational flags.
+Columns:
+- RouteSheetTicketDetailsID (bigint): Unique identifier for the ticket details record.
+- RouteSheetID (bigint): Foreign key referencing the associated route sheet header.
+- TicketNumber (varchar): Ticket number associated with the work item.
+- WorkOrderID (bigint): Identifier of the related work order.
+- WorkLocation (varchar): Location where the work is to be performed.
+- RouteSheetWorkDescriptionID (bigint): Identifier referencing the work description lookup.
+- WorkDescription (varchar): Description of the work to be performed.
+- SecondInspector (varchar): Name or identifier of the second inspector assigned.
+- ConditionID (varchar):
+- Muni (varchar): Municipality associated with the ticket.
+- Markout (varchar): Indicates whether a markout is required.
+- Flagger (varchar): Indicates whether a flagger is required.
+- FusingReq (varchar): Indicates whether fusing is required.
+- IsActive (bit): Indicates whether the ticket details record is active.
+- CreatedBy (int): Identifier of the user who created the record.
+- CreatedDate (datetime2): Date and time when the record was created.
+- ModifiedBy (int): Identifier of the user who last modified the record.
+- ModifiedDate (datetime2): Date and time when the record was last modified.
+- EmergencyPermit (varchar): Indicates whether an emergency permit is associated with the ticket.
+- FlaggerQuantity (varchar): Number of flaggers required for the work.
+- MarkoutDescription (varchar): Description of the markout requirements.
+- ClericalNote (varchar): Administrative or clerical notes associated with the ticket.
+- FusingPeerNeedCount (varchar): Number of fusing peers needed.
+- AssignedSecondInspectorVendorCode (varchar): Vendor code of the assigned second inspector.
+- SecondInspectorAssignedByCrew (varchar): Crew that assigned the second inspector.
+- SecondInspectorAssignedByID (varchar): ID of the person who assigned the second inspector.
+- SecondInspectorAssignedByName (varchar): Name of the person who assigned the second inspector.
+- SecondInspectorCrew (varchar): Crew the second inspector belongs to.
+- SecondInspectorVendorCode (varchar): Vendor code of the second inspector.
+- SecondInspectorEmployeeMasterID (varchar): Employee master ID of the second inspector.
+- SecondInspectorNameITSID (varchar): ITS ID of the second inspector.
+- SecondInspectorAddUpdateByID (varchar): ID of the user who added or last updated the second inspector assignment.
+- SecondInspectorAddUpdateByName (varchar): Name of the user who added or last updated the second inspector assignment.
+- SecondInspectorQualified (varchar): Indicates whether the second inspector is qualified.
+- SecondInspectorDISAPool (varchar):
+- SecondInspectorNotes (varchar): Notes related to the second inspector assignment.
+- SecondInspectorCancelled (bit): Indicates whether the second inspector assignment was cancelled.
+- SecondInspectorCancelledDate (datetime2): Date and time when the second inspector assignment was cancelled.
+
+TABLE : cedemo_RSAssignedEmployeeDetails
+Description: Stores details of employees assigned to route sheet tickets, including identification, role, qualification status, and equipment information.
+Columns:
+- RSAssignedEmployeeDetailsID (bigint): Unique identifier for the assigned employee details record.
+- RouteSheetTicketDetailsID (bigint): Foreign key referencing the associated route sheet ticket details record.
+- ITSID (varchar): ITS system ID of the assigned employee.
+- ITSIDCECT (varchar):
+- EmployeeName (varchar): Full name of the assigned employee.
+- EmployeeID (varchar): Employee identification number.
+- EmployeeMasterIDCECT (varchar):
+- JobTitle (varchar): Job title of the assigned employee.
+- TruckNumber (varchar): Truck number assigned to the employee for this ticket.
+- PhoneRadioNumber (varchar): Phone or radio number used to contact the employee.
+- RouteSheetWorkDescriptionID (bigint): Identifier referencing the work description assigned to the employee.
+- WorkDescription (varchar): Description of the work assigned to the employee.
+- Qualified (varchar): Indicates whether the employee is qualified for the assigned work.
+- QualificationValidatedDate (datetime2): Date and time when the employee's qualification was validated.
+- IsDeleted (bit): Indicates whether the assigned employee record has been soft-deleted.
+- CreatedBy (int): Identifier of the user who created the record.
+- CreatedDate (datetime2): Date and time when the record was created.
+- ModifiedBy (int): Identifier of the user who last modified the record.
+- ModifiedDate (datetime2): Date and time when the record was last modified.
+- EmployeeDISAPool (varchar):
+- MissingCoveredTasks (varchar): Lists required covered tasks that the employee has not completed. Multiple tasks may be stored as semicolon-separated values.
+
+TABLE : cedemo_RSLeaveEmployeeDetails
+Description: Stores details of employees on leave associated with a route sheet, including identification and reason for absence.
+Columns:
+- RSLeaveEmployeeDetailsID (bigint): Unique identifier for the leave employee details record.
+- RouteSheetID (bigint): Foreign key referencing the associated route sheet header.
+- ITSID (varchar): ITS system ID of the employee on leave.
+- ITSIDCECT (varchar):
+- EmployeeName (varchar): Full name of the employee on leave.
+- EmployeeID (varchar): Employee identification number.
+- EmployeeMasterIDCECT (varchar):
+- ReasonForAbsence (varchar): Reason for the employee's absence.
+- Comments (varchar): Additional comments regarding the employee's leave.
+- IsDeleted (bit): Indicates whether the leave record has been soft-deleted. ALways consider IsDeleted=0
+- CreatedBy (int): Identifier of the user who created the record.
+- CreatedDate (datetime2): Date and time when the record was created.
+- ModifiedBy (int): Identifier of the user who last modified the record.
+- ModifiedDate (datetime2): Date and time when the record was last modified.
+
+
+
+RELATIONSHIPS:
+- cedemo_RouteSheetHeader.RouteSheetID = cedemo_RouteSheetTicketDetails.RouteSheetID
+- cedemo_RouteSheetTicketDetails.RouteSheetTicketDetailsID = cedemo_RSAssignedEmployeeDetails.RouteSheetTicketDetailsID
+- cedemo_RouteSheetHeader.RouteSheetID = cedemo_RSLeaveEmployeeDetails.RouteSheetID
+- cedemo_RouteSheetTicketDetails.RouteSheetWorkDescriptionID = cedemo_RSAssignedEmployeeDetails.RouteSheetWorkDescriptionID
+- cedemo_RouteSheetTicketDetails.WorkDescription = cedemo_RSAssignedEmployeeDetails.WorkDescription
+- cedemo_RSAssignedEmployeeDetails.ITSID = cedemo_RSLeaveEmployeeDetails.ITSID
+- cedemo_RSAssignedEmployeeDetails.EmployeeID = cedemo_RSLeaveEmployeeDetails.EmployeeID
+- cedemo_RSAssignedEmployeeDetails.EmployeeName = cedemo_RSLeaveEmployeeDetails.EmployeeName
+
+FILTER CONDITIONS (ALWAYS APPLY):
+- cedemo_RouteSheetHeader.IsActive = 1
+- cedemo_RouteSheetTicketDetails.IsActive = 1
+- cedemo_RSAssignedEmployeeDetails.IsDeleted = 0
+- cedemo_RSLeaveEmployeeDetails.IsDeleted = 0
+

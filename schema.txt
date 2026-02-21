@@ -1,0 +1,740 @@
+Routesheet SCHEMA:
+
+ROUTE SHEET TYPES:
+- Gas Operations Route Sheet: cedemo_RouteSheetHeader, cedemo_RouteSheetTicketDetails, cedemo_RSAssignedEmployeeDetails, cedemo_RSLeaveEmployeeDetails
+- CM Route Sheet: cedemo_ContractorRouteSheetTicketDetails, cedemo_ContractorRSAssignedEmployeeDetails
+- Tunnels Route Sheet: cedemo_TunnelsRouteSheetHeader, cedemo_TunnelsRSAssignedEmployeeDetails, cedemo_TunnelsRSLeaveEmployeeDetails
+- Second Inspector Route Sheet: (no tables defined yet)
+- Corrosion Route Sheet: cedemo_CorrosionRouteSheetHeader, cedemo_CorrosionRSAssignedEmployeeDetails, cedemo_CorrosionRSLeaveEmployeeDetails
+- Leak Survey Route Sheet: cedemo_ContractorsLeakSurveyEmployeeScheduleDetails
+- SLI Route Sheet: cedemo_CompanySLIEmployeeScheduleDetails, cedemo_ContractorsSLIEmployeeScheduleDetails, cedemo_ContractorsMLRSLIEmployeeScheduleDetails
+
+---
+
+## TYPE: Gas Operations Route Sheet
+
+TABLE : cedemo_RouteSheetHeader
+Description: Stores header-level information for each route sheet, including scheduling details, assigned personnel, contact information, and status tracking.
+Columns:
+- RouteSheetID (bigint): Unique identifier for the route sheet record.
+- RouteSheetDate (datetime2): Date and time associated with the route sheet.
+- RouteSheetDay (varchar): Day of the week for the route sheet.It can have Mon,Monday,Tue,Tuesday,Wed,Wednesday,Thu,Thursday,Fri,Friday,Sat,Saturday,Sun,Sunday
+- Shift (varchar): Shift designation for the route sheet. It can have Night,Day,Midnight
+- Region (varchar): Region associated with the route sheet. It can have 'X' , 'M' , 'Q' , and 'W'.
+- District (varchar): District within the region for the route sheet.
+- SectionManagerID (bigint): Identifier of the section manager assigned to the route sheet.
+- ManagerPhone (varchar): Phone number of the section manager.
+- FieldOperationsPlannerID (bigint): Identifier of the field operations planner assigned to the route sheet.
+- PlannerPhone (varchar): Phone number of the field operations planner.
+- OperatingSupervisorID (bigint): Identifier of the operating supervisor assigned to the route sheet.
+- SupervisorPhone (varchar): Phone number of the operating supervisor.
+- Gerc (varchar):
+- EHSHotline (varchar):
+- RouteSheetStatus (varchar): Current status of the route sheet.It can have Submitted, NULL
+- IsActive (bit): Indicates whether the route sheet record is active. Always consider IsActive=1
+- CreatedBy (int): Identifier of the user who created the record.
+- CreatedDate (datetime2): Date and time when the record was created.
+- ModifiedBy (int): Identifier of the user who last modified the record.
+- ModifiedDate (datetime2): Date and time when the record was last modified.
+- AdditonalNotes (varchar): Additional Notes
+
+TABLE : cedemo_RouteSheetTicketDetails
+Description: Stores ticket-level details associated with a route sheet, including work order information, inspection assignments, second inspector tracking, and operational flags.
+Columns:
+- RouteSheetTicketDetailsID (bigint): Unique identifier for the ticket details record.
+- RouteSheetID (bigint): Foreign key referencing the associated route sheet header.
+- TicketNumber (varchar): Ticket number associated with the work item.
+- WorkOrderID (bigint): Identifier of the related work order.
+- WorkLocation (varchar): Location where the work is to be performed.
+- RouteSheetWorkDescriptionID (bigint): Identifier referencing the work description lookup.
+- WorkDescription (varchar): Description of the work to be performed.
+- SecondInspector (varchar): Name or identifier of the second inspector assigned.
+- ConditionID (varchar):
+- Muni (varchar): Municipality associated with the ticket.
+- Markout (varchar): Indicates whether a markout is required.
+- Flagger (varchar): Indicates whether a flagger is required.
+- FusingReq (varchar): Indicates whether fusing is required.
+- IsActive (bit): Indicates whether the ticket details record is active.
+- CreatedBy (int): Identifier of the user who created the record.
+- CreatedDate (datetime2): Date and time when the record was created.
+- ModifiedBy (int): Identifier of the user who last modified the record.
+- ModifiedDate (datetime2): Date and time when the record was last modified.
+- EmergencyPermit (varchar): Indicates whether an emergency permit is associated with the ticket.
+- FlaggerQuantity (varchar): Number of flaggers required for the work.
+- MarkoutDescription (varchar): Description of the markout requirements.
+- ClericalNote (varchar): Administrative or clerical notes associated with the ticket.
+- FusingPeerNeedCount (varchar): Number of fusing peers needed.
+- AssignedSecondInspectorVendorCode (varchar): Vendor code of the assigned second inspector.
+- SecondInspectorAssignedByCrew (varchar): Crew that assigned the second inspector.
+- SecondInspectorAssignedByID (varchar): ID of the person who assigned the second inspector.
+- SecondInspectorAssignedByName (varchar): Name of the person who assigned the second inspector.
+- SecondInspectorCrew (varchar): Crew the second inspector belongs to.
+- SecondInspectorVendorCode (varchar): Vendor code of the second inspector.
+- SecondInspectorEmployeeMasterID (varchar): Employee master ID of the second inspector.
+- SecondInspectorNameITSID (varchar): ITS ID of the second inspector.
+- SecondInspectorAddUpdateByID (varchar): ID of the user who added or last updated the second inspector assignment.
+- SecondInspectorAddUpdateByName (varchar): Name of the user who added or last updated the second inspector assignment.
+- SecondInspectorQualified (varchar): Indicates whether the second inspector is qualified.
+- SecondInspectorDISAPool (varchar):
+- SecondInspectorNotes (varchar): Notes related to the second inspector assignment.
+- SecondInspectorCancelled (bit): Indicates whether the second inspector assignment was cancelled.
+- SecondInspectorCancelledDate (datetime2): Date and time when the second inspector assignment was cancelled.
+
+TABLE : cedemo_RSAssignedEmployeeDetails
+Description: Stores details of employees assigned to route sheet tickets, including identification, role, qualification status, and equipment information.
+Columns:
+- RSAssignedEmployeeDetailsID (bigint): Unique identifier for the assigned employee details record.
+- RouteSheetTicketDetailsID (bigint): Foreign key referencing the associated route sheet ticket details record.
+- ITSID (varchar): ITS system ID of the assigned employee.
+- ITSIDCECT (varchar):
+- EmployeeName (varchar): Full name of the assigned employee.
+- EmployeeID (varchar): Employee identification number.
+- EmployeeMasterIDCECT (varchar):
+- JobTitle (varchar): Job title of the assigned employee.
+- TruckNumber (varchar): Truck number assigned to the employee for this ticket.
+- PhoneRadioNumber (varchar): Phone or radio number used to contact the employee.
+- RouteSheetWorkDescriptionID (bigint): Identifier referencing the work description assigned to the employee.
+- WorkDescription (varchar): Description of the work assigned to the employee.
+- Qualified (varchar): Indicates whether the employee is qualified for the assigned work.
+- QualificationValidatedDate (datetime2): Date and time when the employee's qualification was validated.
+- IsDeleted (bit): Indicates whether the assigned employee record has been soft-deleted.
+- CreatedBy (int): Identifier of the user who created the record.
+- CreatedDate (datetime2): Date and time when the record was created.
+- ModifiedBy (int): Identifier of the user who last modified the record.
+- ModifiedDate (datetime2): Date and time when the record was last modified.
+- EmployeeDISAPool (varchar):
+- MissingCoveredTasks (varchar): Lists required covered tasks that the employee has not completed. Multiple tasks may be stored as semicolon-separated values.
+
+TABLE : cedemo_RSLeaveEmployeeDetails
+Description: Stores details of employees on leave associated with a route sheet, including identification and reason for absence.
+Columns:
+- RSLeaveEmployeeDetailsID (bigint): Unique identifier for the leave employee details record.
+- RouteSheetID (bigint): Foreign key referencing the associated route sheet header.
+- ITSID (varchar): ITS system ID of the employee on leave.
+- ITSIDCECT (varchar):
+- EmployeeName (varchar): Full name of the employee on leave.
+- EmployeeID (varchar): Employee identification number.
+- EmployeeMasterIDCECT (varchar):
+- ReasonForAbsence (varchar): Reason for the employee's absence.
+- Comments (varchar): Additional comments regarding the employee's leave.
+- IsDeleted (bit): Indicates whether the leave record has been soft-deleted. ALways consider IsDeleted=0
+- CreatedBy (int): Identifier of the user who created the record.
+- CreatedDate (datetime2): Date and time when the record was created.
+- ModifiedBy (int): Identifier of the user who last modified the record.
+- ModifiedDate (datetime2): Date and time when the record was last modified.
+
+---
+
+## TYPE: CM Route Sheet
+
+TABLE : cedemo_ContractorRouteSheetTicketDetails
+Description: Stores ticket-level details for contractor route sheets, including work order information, inspector assignments, permit details, second inspector tracking, and operational flags.
+Columns:
+- ContractorRouteSheetTicketDetailsID (bigint): Unique identifier for the contractor route sheet ticket details record.
+- VendorCode (varchar): Vendor code identifying the contractor.
+- RouteSheetDate (datetime2): Date and time associated with the route sheet.
+- RouteSheetDay (varchar): Day of the week for the route sheet.
+- TicketNumber (varchar): Ticket number associated with the work item.
+- WorkOrderID (bigint): Identifier of the related work order.
+- WorkLocation (varchar): Location where the work is to be performed.
+- ContractorRouteSheetWorkDescriptionID (bigint): Identifier referencing the contractor work description lookup.
+- WorkDescription (varchar): Description of the work to be performed.
+- WorkType (varchar): Type of work being performed.
+- InspectorCoveringID (bigint): Identifier of the inspector covering the job.
+- InspectorCoveringName (varchar): Name of the inspector covering the job.
+- InspectorOwnsJobID (bigint): Identifier of the inspector who owns the job.
+- InspectorOwnsJobName (varchar): Name of the inspector who owns the job.
+- PermitHoursFrom (varchar): Start of permitted working hours.
+- PermitHoursTo (varchar): End of permitted working hours.
+- Region (varchar): Region associated with the ticket.
+- Muni (varchar): Municipality associated with the ticket.
+- PFSNumber (varchar):
+- NumberOfRelights (varchar): Number of relights required for the job.
+- Contigency (varchar): Indicates whether a contingency applies.
+- ContingencyNumber (varchar): Contingency reference number.
+- HoldPoint (varchar): Indicates whether a hold point is required.
+- HoldPointTime (varchar): Time associated with the hold point.
+- FusingPeerNeed (varchar): Indicates whether a fusing peer is needed.
+- FusingPeerNeedTime (varchar): Time when the fusing peer is needed.
+- EmployeeIDs (varchar): Comma or semicolon-separated list of employee IDs assigned to the ticket.
+- ITSIDEmployeeNames (varchar): ITS ID and name combinations for assigned employees.
+- EmployeeNames (varchar): Names of employees assigned to the ticket.
+- RouteSheetStatus (varchar): Current status of the route sheet.
+- IsActive (bit): Indicates whether the ticket record is active.
+- CreatedBy (int): Identifier of the user who created the record.
+- CreatedDate (datetime2): Date and time when the record was created.
+- ModifiedBy (int): Identifier of the user who last modified the record.
+- ModifiedDate (datetime2): Date and time when the record was last modified.
+- ForemanEmployeeID (varchar): Employee ID of the foreman assigned to the job.
+- ForemanITSIDEmployeeName (varchar): ITS ID and name of the foreman.
+- ForemanEmployeeName (varchar): Name of the foreman assigned to the job.
+- Code753 (varchar):
+- HelperEmployeeNames (varchar): Names of helper employees assigned to the ticket.
+- HelperEmployeeIDs (varchar): Employee IDs of helper employees assigned to the ticket.
+- CMReviewedByID (bigint): Identifier of the construction manager who reviewed the ticket.
+- CMReviewedByName (varchar): Name of the construction manager who reviewed the ticket.
+- CMReviewedByDate (datetime2): Date and time when the construction manager reviewed the ticket.
+- JobOwnerID (bigint): Identifier of the employee who owns the job.
+- JobOwnerName (varchar): Name of the employee who owns the job.
+- GasOutAddresses (varchar): Addresses affected by gas outage associated with the ticket.
+- SpecialCondition (varchar): Any special conditions applicable to the job.
+- FlaggersPolice (varchar): Indicates whether flaggers or police are required.
+- StateRoad (varchar): Indicates whether the work is on a state road.
+- PermitNumber (varchar): Permit number associated with the work.
+- PermitExpiry (datetime2): Expiration date and time of the permit.
+- PONumber (varchar): Purchase order number associated with the ticket.
+- LayoutNumber (varchar): Layout number associated with the job.
+- FusingPeerNeedCount (varchar): Number of fusing peers needed.
+- AssignedSecondInspectorVendorCode (varchar): Vendor code of the assigned second inspector.
+- SecondInspectorAssignedByCrew (varchar): Crew that assigned the second inspector.
+- SecondInspectorAssignedByID (varchar): ID of the person who assigned the second inspector.
+- SecondInspectorAssignedByName (varchar): Name of the person who assigned the second inspector.
+- SecondInspectorCrew (varchar): Crew the second inspector belongs to.
+- SecondInspectorVendorCode (varchar): Vendor code of the second inspector.
+- SecondInspectorEmployeeMasterID (varchar): Employee master ID of the second inspector.
+- SecondInspectorNameITSID (varchar): ITS ID of the second inspector.
+- SecondInspectorAddUpdateByID (varchar): ID of the user who added or last updated the second inspector assignment.
+- SecondInspectorAddUpdateByName (varchar): Name of the user who added or last updated the second inspector assignment.
+- SecondInspectorQualified (varchar): Indicates whether the second inspector is qualified.
+- SecondInspectorDISAPool (varchar):
+- SecondInspectorCancelled (bit): Indicates whether the second inspector assignment was cancelled.
+- SecondInspectorCancelledDate (datetime2): Date and time when the second inspector assignment was cancelled.
+- SecondInspectorNotes (varchar): Notes related to the second inspector assignment.
+
+TABLE : cedemo_ContractorRSAssignedEmployeeDetails
+Description: Stores details of contractor employees assigned to route sheet tickets, including identification, role, qualification status, and equipment information.
+Columns:
+- ContractorRSAssignedEmployeeDetailsID (bigint): Unique identifier for the contractor assigned employee details record.
+- ContractorRouteSheetTicketDetailsID (bigint): Foreign key referencing the associated contractor route sheet ticket details record.
+- ITSID (varchar): ITS system ID of the assigned contractor employee.
+- EmployeeName (varchar): Full name of the assigned contractor employee.
+- EmployeeMasterID (varchar): Employee master ID of the assigned contractor employee.
+- ITSRole (varchar): ITS role assigned to the contractor employee.
+- TruckNumber (varchar): Truck number assigned to the employee for this ticket.
+- PhoneRadioNumber (varchar): Phone or radio number used to contact the employee.
+- ContractorRouteSheetWorkDescriptionID (bigint): Identifier referencing the contractor work description assigned to the employee.
+- WorkDescription (varchar): Description of the work assigned to the employee.
+- Qualified (varchar): Indicates whether the contractor employee is qualified for the assigned work.
+- QualificationValidatedDate (datetime2): Date and time when the employee's qualification was validated.
+- IsDeleted (bit): Indicates whether the assigned employee record has been soft-deleted.
+- CreatedBy (int): Identifier of the user who created the record.
+- CreatedDate (datetime2): Date and time when the record was created.
+- ModifiedBy (int): Identifier of the user who last modified the record.
+- ModifiedDate (datetime2): Date and time when the record was last modified.
+- JobRole (varchar): Role of the employee on the specific job.
+- EmployeeDISAPool (varchar):
+- MissingCoveredTasks (varchar): Lists required covered tasks that the employee has not completed. Multiple tasks may be stored as semicolon-separated values.
+
+---
+
+## TYPE: Tunnels Route Sheet
+
+TABLE : cedemo_TunnelsRouteSheetHeader
+Description: Stores header-level information for tunnels route sheets, including shift details, assigned supervisors, specialists, and management personnel with their contact and vehicle information.
+Columns:
+- TunnelsRouteSheetID (bigint): Unique identifier for the tunnels route sheet record.
+- RouteSheetDate (datetime2): Date and time associated with the route sheet.
+- RouteSheetDay (varchar): Day of the week for the route sheet.
+- ShiftData (varchar): Shift information for the route sheet.
+- Supervisor1ID (bigint): Identifier of the first supervisor assigned to the route sheet.
+- Supervisor1Name (varchar): Name of the first supervisor.
+- Supervisor1Vehicle (varchar): Vehicle assigned to the first supervisor.
+- Supervisor1Phone (varchar): Phone number of the first supervisor.
+- Supervisor2ID (bigint): Identifier of the second supervisor assigned to the route sheet.
+- Supervisor2Name (varchar): Name of the second supervisor.
+- Supervisor2Vehicle (varchar): Vehicle assigned to the second supervisor.
+- Supervisor2Phone (varchar): Phone number of the second supervisor.
+- Supervisor3ID (bigint): Identifier of the third supervisor assigned to the route sheet.
+- Supervisor3Name (varchar): Name of the third supervisor.
+- Supervisor3Vehicle (varchar): Vehicle assigned to the third supervisor.
+- Supervisor3Phone (varchar): Phone number of the third supervisor.
+- EHSSpecialistID (bigint): Identifier of the EHS specialist assigned to the route sheet.
+- EHSSpecialistName (varchar): Name of the EHS specialist.
+- EHSSpecialistVehicle (varchar): Vehicle assigned to the EHS specialist.
+- EHSSpecialistPhone (varchar): Phone number of the EHS specialist.
+- ManagerID (bigint): Identifier of the manager assigned to the route sheet.
+- ManagerName (varchar): Name of the manager.
+- ManagerVehicle (varchar): Vehicle assigned to the manager.
+- ManagerPhone (varchar): Phone number of the manager.
+- PlannerID (bigint): Identifier of the planner assigned to the route sheet.
+- PlannerName (varchar): Name of the planner.
+- PlannerVehicle (varchar): Vehicle assigned to the planner.
+- PlannerPhone (varchar): Phone number of the planner.
+- EngineerID (bigint): Identifier of the engineer assigned to the route sheet.
+- EngineerName (varchar): Name of the engineer.
+- EngineerVehicle (varchar): Vehicle assigned to the engineer.
+- EngineerPhone (varchar): Phone number of the engineer.
+- ProjectSpecialistID (bigint): Identifier of the project specialist assigned to the route sheet.
+- ProjectSpecialistName (varchar): Name of the project specialist.
+- ProjectSpecialistVehicle (varchar): Vehicle assigned to the project specialist.
+- ProjectSpecialistPhone (varchar): Phone number of the project specialist.
+- RouteSheetStatus (varchar): Current status of the route sheet.
+- AdditonalNotes (varchar):
+- IsActive (bit): Indicates whether the route sheet record is active.
+- CreatedBy (int): Identifier of the user who created the record.
+- CreatedDate (datetime2): Date and time when the record was created.
+- ModifiedBy (int): Identifier of the user who last modified the record.
+- ModifiedDate (datetime2): Date and time when the record was last modified.
+
+TABLE : cedemo_TunnelsRSAssignedEmployeeDetails
+Description: Stores details of employees assigned to tunnels route sheets, including work location, supervisor assignment, identification, qualification status, and vehicle information.
+Columns:
+- TunnelsRSAssignedEmployeeDetailsID (bigint): Unique identifier for the tunnels assigned employee details record.
+- TunnelsRouteSheetID (bigint): Foreign key referencing the associated tunnels route sheet header.
+- WorkLocation (varchar): Location where the employee is assigned to work.
+- SupervisorID (bigint): Identifier of the supervisor overseeing the employee.
+- SupervisorName (varchar): Name of the supervisor overseeing the employee.
+- ITSID (varchar): ITS system ID of the assigned employee.
+- ITSIDCECT (varchar):
+- EmployeeName (varchar): Full name of the assigned employee.
+- EmployeeID (varchar): Employee identification number.
+- EmployeeMasterIDCECT (varchar):
+- EmployeeVehicle (varchar): Vehicle assigned to the employee.
+- AccountNumber (varchar): Account number associated with the employee's assignment.
+- WorkDescriptionID (bigint): Identifier referencing the work description assigned to the employee.
+- WorkDescription (varchar): Description of the work assigned to the employee.
+- EmployeeDISAPool (varchar):
+- Qualified (varchar): Indicates whether the employee is qualified for the assigned work.
+- MissingCoveredTasks (varchar): Lists required covered tasks that the employee has not completed. Multiple tasks may be stored as semicolon-separated values.
+- QualificationValidatedDate (datetime2): Date and time when the employee's qualification was validated.
+- Notes (varchar): Additional notes related to the employee's assignment.
+- IsDeleted (bit): Indicates whether the assigned employee record has been soft-deleted.
+- CreatedBy (int): Identifier of the user who created the record.
+- CreatedDate (datetime2): Date and time when the record was created.
+- ModifiedBy (int): Identifier of the user who last modified the record.
+- ModifiedDate (datetime2): Date and time when the record was last modified.
+
+TABLE : cedemo_TunnelsRSLeaveEmployeeDetails
+Description: Stores details of employees on leave associated with a tunnels route sheet, including identification and reason for absence.
+Columns:
+- TunnelsRSLeaveEmployeeDetailsID (bigint): Unique identifier for the tunnels leave employee details record.
+- TunnelsRouteSheetID (bigint): Foreign key referencing the associated tunnels route sheet header.
+- ITSID (varchar): ITS system ID of the employee on leave.
+- ITSIDCECT (varchar):
+- EmployeeName (varchar): Full name of the employee on leave.
+- EmployeeID (varchar): Employee identification number.
+- EmployeeMasterIDCECT (varchar):
+- ReasonForAbsence (varchar): Reason for the employee's absence.
+- Comments (varchar): Additional comments regarding the employee's leave.
+- IsDeleted (bit): Indicates whether the leave record has been soft-deleted.
+- CreatedBy (int): Identifier of the user who created the record.
+- CreatedDate (datetime2): Date and time when the record was created.
+- ModifiedBy (int): Identifier of the user who last modified the record.
+- ModifiedDate (datetime2): Date and time when the record was last modified.
+
+---
+
+## TYPE: Corrosion Route Sheet
+
+TABLE : cedemo_CorrosionRouteSheetHeader
+Description: Stores header-level information for corrosion route sheets, including scheduling details, assigned supervisors, planner, and section manager with their contact and vehicle information.
+Columns:
+- CorrosionRouteSheetID (bigint): Unique identifier for the corrosion route sheet record.
+- RouteSheetDate (datetime2): Date and time associated with the route sheet.
+- RouteSheetDay (varchar): Day of the week for the route sheet.
+- Supervisor1ID (bigint): Identifier of the first supervisor assigned to the route sheet.
+- Supervisor1Name (varchar): Name of the first supervisor.
+- Supervisor1Vehicle (varchar): Vehicle assigned to the first supervisor.
+- Supervisor1Phone (varchar): Phone number of the first supervisor.
+- Supervisor2ID (bigint): Identifier of the second supervisor assigned to the route sheet.
+- Supervisor2Name (varchar): Name of the second supervisor.
+- Supervisor2Vehicle (varchar): Vehicle assigned to the second supervisor.
+- Supervisor2Phone (varchar): Phone number of the second supervisor.
+- Supervisor3ID (bigint): Identifier of the third supervisor assigned to the route sheet.
+- Supervisor3Name (varchar): Name of the third supervisor.
+- Supervisor3Vehicle (varchar): Vehicle assigned to the third supervisor.
+- Supervisor3Phone (varchar): Phone number of the third supervisor.
+- Supervisor4ID (bigint): Identifier of the fourth supervisor assigned to the route sheet.
+- Supervisor4Name (varchar): Name of the fourth supervisor.
+- Supervisor4Vehicle (varchar): Vehicle assigned to the fourth supervisor.
+- Supervisor4Phone (varchar): Phone number of the fourth supervisor.
+- PlannerID (bigint): Identifier of the planner assigned to the route sheet.
+- PlannerName (varchar): Name of the planner.
+- PlannerVehicle (varchar): Vehicle assigned to the planner.
+- PlannerPhone (varchar): Phone number of the planner.
+- SectionManagerID (bigint): Identifier of the section manager assigned to the route sheet.
+- SectionManagerName (varchar): Name of the section manager.
+- SectionManagerVehicle (varchar): Vehicle assigned to the section manager.
+- SectionManagerPhone (varchar): Phone number of the section manager.
+- RouteSheetStatus (varchar): Current status of the route sheet.
+- AdditonalNotes (varchar):
+- IsActive (bit): Indicates whether the route sheet record is active.
+- CreatedBy (int): Identifier of the user who created the record.
+- CreatedDate (datetime2): Date and time when the record was created.
+- ModifiedBy (int): Identifier of the user who last modified the record.
+- ModifiedDate (datetime2): Date and time when the record was last modified.
+
+TABLE : cedemo_CorrosionRSAssignedEmployeeDetails
+Description: Stores details of employees assigned to corrosion route sheets, including identification, work location, qualification status, and vehicle information.
+Columns:
+- CorrosionRSAssignedEmployeeDetailsID (bigint): Unique identifier for the corrosion assigned employee details record.
+- CorrosionRouteSheetID (bigint): Foreign key referencing the associated corrosion route sheet header.
+- ITSID (varchar): ITS system ID of the assigned employee.
+- ITSIDCECT (varchar):
+- EmployeeName (varchar): Full name of the assigned employee.
+- EmployeeID (varchar): Employee identification number.
+- EmployeeMasterIDCECT (varchar):
+- EmployeeVehicle (varchar): Vehicle assigned to the employee.
+- WorkLocation (varchar): Location where the employee is assigned to work.
+- Borough (varchar): Borough associated with the employee's work assignment.
+- WorkDescriptionID (bigint): Identifier referencing the work description assigned to the employee.
+- WorkDescription (varchar): Description of the work assigned to the employee.
+- EmployeeDISAPool (varchar):
+- Qualified (varchar): Indicates whether the employee is qualified for the assigned work.
+- MissingCoveredTasks (varchar): Lists required covered tasks that the employee has not completed. Multiple tasks may be stored as semicolon-separated values.
+- QualificationValidatedDate (datetime2): Date and time when the employee's qualification was validated.
+- IsDeleted (bit): Indicates whether the assigned employee record has been soft-deleted.
+- CreatedBy (int): Identifier of the user who created the record.
+- CreatedDate (datetime2): Date and time when the record was created.
+- ModifiedBy (int): Identifier of the user who last modified the record.
+- ModifiedDate (datetime2): Date and time when the record was last modified.
+- TitleName (varchar): Job title or role name of the assigned employee.
+- Notes (varchar): Additional notes related to the employee's assignment.
+
+TABLE : cedemo_CorrosionRSLeaveEmployeeDetails
+Description: Stores details of employees on leave associated with a corrosion route sheet, including identification and reason for absence.
+Columns:
+- CorrosionRSLeaveEmployeeDetailsID (bigint): Unique identifier for the corrosion leave employee details record.
+- CorrosionRouteSheetID (bigint): Foreign key referencing the associated corrosion route sheet header.
+- ITSID (varchar): ITS system ID of the employee on leave.
+- ITSIDCECT (varchar):
+- EmployeeName (varchar): Full name of the employee on leave.
+- EmployeeID (varchar): Employee identification number.
+- EmployeeMasterIDCECT (varchar):
+- ReasonForAbsence (varchar): Reason for the employee's absence.
+- Comments (varchar): Additional comments regarding the employee's leave.
+- IsDeleted (bit): Indicates whether the leave record has been soft-deleted.
+- CreatedBy (int): Identifier of the user who created the record.
+- CreatedDate (datetime2): Date and time when the record was created.
+- ModifiedBy (int): Identifier of the user who last modified the record.
+- ModifiedDate (datetime2): Date and time when the record was last modified.
+
+---
+
+## TYPE: Leak Survey Route Sheet
+
+TABLE : cedemo_ContractorsLeakSurveyEmployeeScheduleDetails
+Description: Stores weekly schedule details for contractor leak survey employees, including shift assignments, qualification status, municipality, and vehicle information for each day of the week.
+Columns:
+- LeakSurveyEmployeeScheduleID (bigint): Unique identifier for the leak survey employee schedule record.
+- YearNumber (varchar): Year associated with the schedule.
+- Region (varchar): Region associated with the employee's schedule.
+- WeekNumber (bigint): Week number within the year for the schedule.
+- ActualEmployeeName (varchar): Name of the employee who actually worked the schedule.
+- ActualITSIDCECT (varchar):
+- ActualITSID (varchar): ITS ID of the employee who actually worked the schedule.
+- ActualEmployeeCompanyID (varchar): Company ID of the employee who actually worked the schedule.
+- EmployeeName (varchar): Name of the originally scheduled employee.
+- ITSIDCECT (varchar):
+- ITSID (varchar): ITS ID of the originally scheduled employee.
+- EmployeeCompanyID (varchar): Company ID of the originally scheduled employee.
+- SundayDate (datetime2): Date of the Sunday in the scheduled week.
+- MondayDate (datetime2): Date of the Monday in the scheduled week.
+- TuesdayDate (datetime2): Date of the Tuesday in the scheduled week.
+- WednesdayDate (datetime2): Date of the Wednesday in the scheduled week.
+- ThursdayDate (datetime2): Date of the Thursday in the scheduled week.
+- FridayDate (datetime2): Date of the Friday in the scheduled week.
+- SaturdayDate (datetime2): Date of the Saturday in the scheduled week.
+- ActualSundayShift (varchar): Actual shift worked by the employee on Sunday.
+- ActualMondayShift (varchar): Actual shift worked by the employee on Monday.
+- ActualTuesdayShift (varchar): Actual shift worked by the employee on Tuesday.
+- ActualWednesdayShift (varchar): Actual shift worked by the employee on Wednesday.
+- ActualThursdayShift (varchar): Actual shift worked by the employee on Thursday.
+- ActualFridayShift (varchar): Actual shift worked by the employee on Friday.
+- ActualSaturdayShift (varchar): Actual shift worked by the employee on Saturday.
+- SundayShift (varchar): Scheduled shift for Sunday.
+- MondayShift (varchar): Scheduled shift for Monday.
+- TuesdayShift (varchar): Scheduled shift for Tuesday.
+- WednesdayShift (varchar): Scheduled shift for Wednesday.
+- ThursdayShift (varchar): Scheduled shift for Thursday.
+- FridayShift (varchar): Scheduled shift for Friday.
+- SaturdayShift (varchar): Scheduled shift for Saturday.
+- SundayNotes (varchar): Notes for Sunday's schedule.
+- MondayNotes (varchar): Notes for Monday's schedule.
+- TuesdayNotes (varchar): Notes for Tuesday's schedule.
+- WednesdayNotes (varchar): Notes for Wednesday's schedule.
+- ThursdayNotes (varchar): Notes for Thursday's schedule.
+- FridayNotes (varchar): Notes for Friday's schedule.
+- SaturdayNotes (varchar): Notes for Saturday's schedule.
+- SundayQualifiedWorkDescriptions (varchar): Work descriptions the employee is qualified to perform on Sunday.
+- MondayQualifiedWorkDescriptions (varchar): Work descriptions the employee is qualified to perform on Monday.
+- TuesdayQualifiedWorkDescriptions (varchar): Work descriptions the employee is qualified to perform on Tuesday.
+- WednesdayQualifiedWorkDescriptions (varchar): Work descriptions the employee is qualified to perform on Wednesday.
+- ThursdayQualifiedWorkDescriptions (varchar): Work descriptions the employee is qualified to perform on Thursday.
+- FridayQualifiedWorkDescriptions (varchar): Work descriptions the employee is qualified to perform on Friday.
+- SaturdayQualifiedWorkDescriptions (varchar): Work descriptions the employee is qualified to perform on Saturday.
+- SundayNOTQualifiedWorkDescriptions (varchar): Work descriptions the employee is not qualified to perform on Sunday.
+- MondayNOTQualifiedWorkDescriptions (varchar): Work descriptions the employee is not qualified to perform on Monday.
+- TuesdayNOTQualifiedWorkDescriptions (varchar): Work descriptions the employee is not qualified to perform on Tuesday.
+- WednesdayNOTQualifiedWorkDescriptions (varchar): Work descriptions the employee is not qualified to perform on Wednesday.
+- ThursdayNOTQualifiedWorkDescriptions (varchar): Work descriptions the employee is not qualified to perform on Thursday.
+- FridayNOTQualifiedWorkDescriptions (varchar): Work descriptions the employee is not qualified to perform on Friday.
+- SaturdayNOTQualifiedWorkDescriptions (varchar): Work descriptions the employee is not qualified to perform on Saturday.
+- SundayMissingCoveredTaskNums (varchar): Missing covered task numbers for Sunday.
+- MondayMissingCoveredTaskNums (varchar): Missing covered task numbers for Monday.
+- TuesdayMissingCoveredTaskNums (varchar): Missing covered task numbers for Tuesday.
+- WednesdayMissingCoveredTaskNums (varchar): Missing covered task numbers for Wednesday.
+- ThursdayMissingCoveredTaskNums (varchar): Missing covered task numbers for Thursday.
+- FridayMissingCoveredTaskNums (varchar): Missing covered task numbers for Friday.
+- SaturdayMissingCoveredTaskNums (varchar): Missing covered task numbers for Saturday.
+- SundayDISAPool (varchar):
+- MondayDISAPool (varchar):
+- TuesdayDISAPool (varchar):
+- WednesdayDISAPool (varchar):
+- ThursdayDISAPool (varchar):
+- FridayDISAPool (varchar):
+- SaturdayDISAPool (varchar):
+- IsDeleted (bit): Indicates whether the schedule record has been soft-deleted.
+- CreatedBy (int): Identifier of the user who created the record.
+- CreatedDate (datetime2): Date and time when the record was created.
+- ModifiedBy (int): Identifier of the user who last modified the record.
+- ModifiedDate (datetime2): Date and time when the record was last modified.
+- SundayMuni (varchar): Municipality assigned for Sunday's work.
+- MondayMuni (varchar): Municipality assigned for Monday's work.
+- TuesdayMuni (varchar): Municipality assigned for Tuesday's work.
+- WednesdayMuni (varchar): Municipality assigned for Wednesday's work.
+- ThursdayMuni (varchar): Municipality assigned for Thursday's work.
+- FridayMuni (varchar): Municipality assigned for Friday's work.
+- SaturdayMuni (varchar): Municipality assigned for Saturday's work.
+- SundayVehicleNumber (varchar): Vehicle number assigned to the employee on Sunday.
+- MondayVehicleNumber (varchar): Vehicle number assigned to the employee on Monday.
+- TuesdayVehicleNumber (varchar): Vehicle number assigned to the employee on Tuesday.
+- WednesdayVehicleNumber (varchar): Vehicle number assigned to the employee on Wednesday.
+- ThursdayVehicleNumber (varchar): Vehicle number assigned to the employee on Thursday.
+- FridayVehicleNumber (varchar): Vehicle number assigned to the employee on Friday.
+- SaturdayVehicleNumber (varchar): Vehicle number assigned to the employee on Saturday.
+
+---
+
+## TYPE: SLI Route Sheet
+
+TABLE : cedemo_CompanySLIEmployeeScheduleDetails
+Description: Stores weekly schedule details for company SLI employees, including shift assignments, qualification status by work activity function, and missing covered task information for each day of the week.
+Columns:
+- SLIEmployeeScheduleID (bigint): Unique identifier for the SLI employee schedule record.
+- YearNumber (varchar): Year associated with the schedule.
+- Region (varchar): Region associated with the employee's schedule.
+- WeekNumber (bigint): Week number within the year for the schedule.
+- ActualEmployeeName (varchar): Name of the employee who actually worked the schedule.
+- ActualITSIDCECT (varchar):
+- ActualITSID (varchar): ITS ID of the employee who actually worked the schedule.
+- ActualEmployeeCompanyID (varchar): Company ID of the employee who actually worked the schedule.
+- EmployeeName (varchar): Name of the originally scheduled employee.
+- ITSIDCECT (varchar):
+- ITSID (varchar): ITS ID of the originally scheduled employee.
+- EmployeeCompanyID (varchar): Company ID of the originally scheduled employee.
+- SundayDate (datetime2): Date of the Sunday in the scheduled week.
+- MondayDate (datetime2): Date of the Monday in the scheduled week.
+- TuesdayDate (datetime2): Date of the Tuesday in the scheduled week.
+- WednesdayDate (datetime2): Date of the Wednesday in the scheduled week.
+- ThursdayDate (datetime2): Date of the Thursday in the scheduled week.
+- FridayDate (datetime2): Date of the Friday in the scheduled week.
+- SaturdayDate (datetime2): Date of the Saturday in the scheduled week.
+- ActualSundayShift (varchar): Actual shift worked by the employee on Sunday.
+- ActualMondayShift (varchar): Actual shift worked by the employee on Monday.
+- ActualTuesdayShift (varchar): Actual shift worked by the employee on Tuesday.
+- ActualWednesdayShift (varchar): Actual shift worked by the employee on Wednesday.
+- ActualThursdayShift (varchar): Actual shift worked by the employee on Thursday.
+- ActualFridayShift (varchar): Actual shift worked by the employee on Friday.
+- ActualSaturdayShift (varchar): Actual shift worked by the employee on Saturday.
+- SundayShift (varchar): Scheduled shift for Sunday.
+- MondayShift (varchar): Scheduled shift for Monday.
+- TuesdayShift (varchar): Scheduled shift for Tuesday.
+- WednesdayShift (varchar): Scheduled shift for Wednesday.
+- ThursdayShift (varchar): Scheduled shift for Thursday.
+- FridayShift (varchar): Scheduled shift for Friday.
+- SaturdayShift (varchar): Scheduled shift for Saturday.
+- SundayNotes (varchar): Notes for Sunday's schedule.
+- MondayNotes (varchar): Notes for Monday's schedule.
+- TuesdayNotes (varchar): Notes for Tuesday's schedule.
+- WednesdayNotes (varchar): Notes for Wednesday's schedule.
+- ThursdayNotes (varchar): Notes for Thursday's schedule.
+- FridayNotes (varchar): Notes for Friday's schedule.
+- SaturdayNotes (varchar): Notes for Saturday's schedule.
+- SundayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Sunday.
+- MondayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Monday.
+- TuesdayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Tuesday.
+- WednesdayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Wednesday.
+- ThursdayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Thursday.
+- FridayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Friday.
+- SaturdayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Saturday.
+- SundayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Sunday.
+- MondayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Monday.
+- TuesdayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Tuesday.
+- WednesdayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Wednesday.
+- ThursdayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Thursday.
+- FridayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Friday.
+- SaturdayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Saturday.
+- SundayMissingCoveredTaskNums (varchar): Missing covered task numbers for Sunday.
+- MondayMissingCoveredTaskNums (varchar): Missing covered task numbers for Monday.
+- TuesdayMissingCoveredTaskNums (varchar): Missing covered task numbers for Tuesday.
+- WednesdayMissingCoveredTaskNums (varchar): Missing covered task numbers for Wednesday.
+- ThursdayMissingCoveredTaskNums (varchar): Missing covered task numbers for Thursday.
+- FridayMissingCoveredTaskNums (varchar): Missing covered task numbers for Friday.
+- SaturdayMissingCoveredTaskNums (varchar): Missing covered task numbers for Saturday.
+- SundayDISAPool (varchar):
+- MondayDISAPool (varchar):
+- TuesdayDISAPool (varchar):
+- WednesdayDISAPool (varchar):
+- ThursdayDISAPool (varchar):
+- FridayDISAPool (varchar):
+- SaturdayDISAPool (varchar):
+- IsDeleted (bit): Indicates whether the schedule record has been soft-deleted.
+- CreatedBy (int): Identifier of the user who created the record.
+- CreatedDate (datetime2): Date and time when the record was created.
+- ModifiedBy (int): Identifier of the user who last modified the record.
+- ModifiedDate (datetime2): Date and time when the record was last modified.
+
+TABLE : cedemo_ContractorsSLIEmployeeScheduleDetails
+Description: Stores weekly schedule details for contractor SLI employees, including shift assignments, qualification status by work activity function, and missing covered task information for each day of the week.
+Columns:
+- SLIEmployeeScheduleID (bigint): Unique identifier for the contractor SLI employee schedule record.
+- YearNumber (varchar): Year associated with the schedule.
+- Region (varchar): Region associated with the employee's schedule.
+- WeekNumber (bigint): Week number within the year for the schedule.
+- ActualEmployeeName (varchar): Name of the employee who actually worked the schedule.
+- ActualITSIDCECT (varchar):
+- ActualITSID (varchar): ITS ID of the employee who actually worked the schedule.
+- ActualEmployeeCompanyID (varchar): Company ID of the employee who actually worked the schedule.
+- EmployeeName (varchar): Name of the originally scheduled employee.
+- ITSIDCECT (varchar):
+- ITSID (varchar): ITS ID of the originally scheduled employee.
+- EmployeeCompanyID (varchar): Company ID of the originally scheduled employee.
+- SundayDate (datetime2): Date of the Sunday in the scheduled week.
+- MondayDate (datetime2): Date of the Monday in the scheduled week.
+- TuesdayDate (datetime2): Date of the Tuesday in the scheduled week.
+- WednesdayDate (datetime2): Date of the Wednesday in the scheduled week.
+- ThursdayDate (datetime2): Date of the Thursday in the scheduled week.
+- FridayDate (datetime2): Date of the Friday in the scheduled week.
+- SaturdayDate (datetime2): Date of the Saturday in the scheduled week.
+- ActualSundayShift (varchar): Actual shift worked by the employee on Sunday.
+- ActualMondayShift (varchar): Actual shift worked by the employee on Monday.
+- ActualTuesdayShift (varchar): Actual shift worked by the employee on Tuesday.
+- ActualWednesdayShift (varchar): Actual shift worked by the employee on Wednesday.
+- ActualThursdayShift (varchar): Actual shift worked by the employee on Thursday.
+- ActualFridayShift (varchar): Actual shift worked by the employee on Friday.
+- ActualSaturdayShift (varchar): Actual shift worked by the employee on Saturday.
+- SundayShift (varchar): Scheduled shift for Sunday.
+- MondayShift (varchar): Scheduled shift for Monday.
+- TuesdayShift (varchar): Scheduled shift for Tuesday.
+- WednesdayShift (varchar): Scheduled shift for Wednesday.
+- ThursdayShift (varchar): Scheduled shift for Thursday.
+- FridayShift (varchar): Scheduled shift for Friday.
+- SaturdayShift (varchar): Scheduled shift for Saturday.
+- SundayNotes (varchar): Notes for Sunday's schedule.
+- MondayNotes (varchar): Notes for Monday's schedule.
+- TuesdayNotes (varchar): Notes for Tuesday's schedule.
+- WednesdayNotes (varchar): Notes for Wednesday's schedule.
+- ThursdayNotes (varchar): Notes for Thursday's schedule.
+- FridayNotes (varchar): Notes for Friday's schedule.
+- SaturdayNotes (varchar): Notes for Saturday's schedule.
+- SundayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Sunday.
+- MondayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Monday.
+- TuesdayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Tuesday.
+- WednesdayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Wednesday.
+- ThursdayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Thursday.
+- FridayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Friday.
+- SaturdayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Saturday.
+- SundayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Sunday.
+- MondayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Monday.
+- TuesdayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Tuesday.
+- WednesdayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Wednesday.
+- ThursdayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Thursday.
+- FridayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Friday.
+- SaturdayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Saturday.
+- SundayMissingCoveredTaskNums (varchar): Missing covered task numbers for Sunday.
+- MondayMissingCoveredTaskNums (varchar): Missing covered task numbers for Monday.
+- TuesdayMissingCoveredTaskNums (varchar): Missing covered task numbers for Tuesday.
+- WednesdayMissingCoveredTaskNums (varchar): Missing covered task numbers for Wednesday.
+- ThursdayMissingCoveredTaskNums (varchar): Missing covered task numbers for Thursday.
+- FridayMissingCoveredTaskNums (varchar): Missing covered task numbers for Friday.
+- SaturdayMissingCoveredTaskNums (varchar): Missing covered task numbers for Saturday.
+- SundayDISAPool (varchar):
+- MondayDISAPool (varchar):
+- TuesdayDISAPool (varchar):
+- WednesdayDISAPool (varchar):
+- ThursdayDISAPool (varchar):
+- FridayDISAPool (varchar):
+- SaturdayDISAPool (varchar):
+- IsDeleted (bit): Indicates whether the schedule record has been soft-deleted.
+- CreatedBy (int): Identifier of the user who created the record.
+- CreatedDate (datetime2): Date and time when the record was created.
+- ModifiedBy (int): Identifier of the user who last modified the record.
+- ModifiedDate (datetime2): Date and time when the record was last modified.
+
+TABLE : cedemo_ContractorsMLRSLIEmployeeScheduleDetails
+Description: Stores weekly schedule details for contractor MLR SLI employees, including shift assignments, qualification status by work activity function, and missing covered task information for each day of the week.
+Columns:
+- SLIEmployeeScheduleID (bigint): Unique identifier for the contractor MLR SLI employee schedule record.
+- YearNumber (varchar): Year associated with the schedule.
+- Region (varchar): Region associated with the employee's schedule.
+- WeekNumber (bigint): Week number within the year for the schedule.
+- ActualEmployeeName (varchar): Name of the employee who actually worked the schedule.
+- ActualITSIDCECT (varchar):
+- ActualITSID (varchar): ITS ID of the employee who actually worked the schedule.
+- ActualEmployeeCompanyID (varchar): Company ID of the employee who actually worked the schedule.
+- EmployeeName (varchar): Name of the originally scheduled employee.
+- ITSIDCECT (varchar):
+- ITSID (varchar): ITS ID of the originally scheduled employee.
+- EmployeeCompanyID (varchar): Company ID of the originally scheduled employee.
+- SundayDate (datetime2): Date of the Sunday in the scheduled week.
+- MondayDate (datetime2): Date of the Monday in the scheduled week.
+- TuesdayDate (datetime2): Date of the Tuesday in the scheduled week.
+- WednesdayDate (datetime2): Date of the Wednesday in the scheduled week.
+- ThursdayDate (datetime2): Date of the Thursday in the scheduled week.
+- FridayDate (datetime2): Date of the Friday in the scheduled week.
+- SaturdayDate (datetime2): Date of the Saturday in the scheduled week.
+- ActualSundayShift (varchar): Actual shift worked by the employee on Sunday.
+- ActualMondayShift (varchar): Actual shift worked by the employee on Monday.
+- ActualTuesdayShift (varchar): Actual shift worked by the employee on Tuesday.
+- ActualWednesdayShift (varchar): Actual shift worked by the employee on Wednesday.
+- ActualThursdayShift (varchar): Actual shift worked by the employee on Thursday.
+- ActualFridayShift (varchar): Actual shift worked by the employee on Friday.
+- ActualSaturdayShift (varchar): Actual shift worked by the employee on Saturday.
+- SundayShift (varchar): Scheduled shift for Sunday.
+- MondayShift (varchar): Scheduled shift for Monday.
+- TuesdayShift (varchar): Scheduled shift for Tuesday.
+- WednesdayShift (varchar): Scheduled shift for Wednesday.
+- ThursdayShift (varchar): Scheduled shift for Thursday.
+- FridayShift (varchar): Scheduled shift for Friday.
+- SaturdayShift (varchar): Scheduled shift for Saturday.
+- SundayNotes (varchar): Notes for Sunday's schedule.
+- MondayNotes (varchar): Notes for Monday's schedule.
+- TuesdayNotes (varchar): Notes for Tuesday's schedule.
+- WednesdayNotes (varchar): Notes for Wednesday's schedule.
+- ThursdayNotes (varchar): Notes for Thursday's schedule.
+- FridayNotes (varchar): Notes for Friday's schedule.
+- SaturdayNotes (varchar): Notes for Saturday's schedule.
+- SundayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Sunday.
+- MondayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Monday.
+- TuesdayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Tuesday.
+- WednesdayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Wednesday.
+- ThursdayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Thursday.
+- FridayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Friday.
+- SaturdayQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is qualified to perform on Saturday.
+- SundayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Sunday.
+- MondayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Monday.
+- TuesdayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Tuesday.
+- WednesdayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Wednesday.
+- ThursdayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Thursday.
+- FridayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Friday.
+- SaturdayNOTQualifiedWorkActivityFunctions (varchar): Work activity functions the employee is not qualified to perform on Saturday.
+- SundayMissingCoveredTaskNums (varchar): Missing covered task numbers for Sunday.
+- MondayMissingCoveredTaskNums (varchar): Missing covered task numbers for Monday.
+- TuesdayMissingCoveredTaskNums (varchar): Missing covered task numbers for Tuesday.
+- WednesdayMissingCoveredTaskNums (varchar): Missing covered task numbers for Wednesday.
+- ThursdayMissingCoveredTaskNums (varchar): Missing covered task numbers for Thursday.
+- FridayMissingCoveredTaskNums (varchar): Missing covered task numbers for Friday.
+- SaturdayMissingCoveredTaskNums (varchar): Missing covered task numbers for Saturday.
+- SundayDISAPool (varchar):
+- MondayDISAPool (varchar):
+- TuesdayDISAPool (varchar):
+- WednesdayDISAPool (varchar):
+- ThursdayDISAPool (varchar):
+- FridayDISAPool (varchar):
+- SaturdayDISAPool (varchar):
+- IsDeleted (bit): Indicates whether the schedule record has been soft-deleted.
+- CreatedBy (int): Identifier of the user who created the record.
+- CreatedDate (datetime2): Date and time when the record was created.
+- ModifiedBy (int): Identifier of the user who last modified the record.
+- ModifiedDate (datetime2): Date and time when the record was last modified.

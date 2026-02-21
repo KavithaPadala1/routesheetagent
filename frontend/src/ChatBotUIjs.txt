@@ -1,0 +1,241 @@
+import React, { useState, useRef, useEffect } from "react";
+import './ChatBotUI.css';
+import { Icon } from '@iconify/react';
+import AudioRecorder from './components/AudioRecorder';
+import config from './botconfiguration.json';
+import AudioPlayer from "./components/AudioPlayerStyled";
+import FeedbackRating from "./components/FeedbackRating";
+import TimeSlots from "./components/TimeSlots";
+
+const SPEECH_API_URL = "https://kaveriazureoenai.azurewebsites.net/synthesize_speech/";
+const CHAT_API_URL = config.apiUrl;
+
+const ChatBotUI = () => {
+  const initialMessages = JSON.parse(sessionStorage.getItem('chatbotMessages')) || config.initialMessages
+  const [messages, setMessages] = useState(initialMessages)
+  const [input, setInput] = useState("");
+  const [playingAudio, setPlayingAudio] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isInputDisabled, setIsInputDisabled] = useState(false)
+  const chatboxRef = useRef(null);
+  const audioRef = useRef(null);
+  const currentAudioRef = useRef(null);
+  const messagesEndRef = useRef(null)
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty('--primary-color', config.colors.primaryColor)
+    root.style.setProperty('--secondary-color', config.colors.secondaryColor)
+    root.style.setProperty('--white-color', config.colors.whiteColor)
+    root.style.setProperty('--black-color', config.colors.blackColor)
+    root.style.setProperty('--grey-color', config.colors.greyColor)
+    root.style.setProperty('--error-bg-color', config.colors.errorBgColor)
+    root.style.setProperty('--error-text-color', config.colors.errorTextColor)
+  }, []);
+
+  useEffect(() => {
+    setIsInputDisabled(isLoading);
+  }, [isLoading])
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages])
+
+  useEffect(() => {
+    sessionStorage.setItem('chatbotMessages', JSON.stringify(messages));
+  }, [messages])
+
+  useEffect(() => {
+    const checkSession = setInterval(() => {
+      const now = Date.now();
+      const storedMessages = sessionStorage.getItem('chatbotMessages');
+
+      if (storedMessages) {
+        const parsedMessages = JSON.parse(storedMessages);
+        if (parsedMessages.length > 0) {
+          const lastMessage = parsedMessages.slice(-1)[0];
+          const lastMessageTime = new Date(lastMessage.timestamp).getTime();
+
+          if (now - lastMessageTime > 1800000) {
+            sessionStorage.removeItem('chatbotMessages')
+            console.log('Session expired and data removed')
+            setMessages(config.initialMessages)
+          }
+        }
+      }
+    }, 20000)
+
+    return () => clearInterval(checkSession)
+  }, [])
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [])
+
+  const createChatMessage = (text, type, format, options = [], disabled = false) => ({
+    text,
+    type,
+    format,
+    options,
+    disabled,
+    timestamp: new Date().toISOString()
+  });
+
+  const sendMessageToAPI = async (message, newSession, isAudio = false) => {
+    const formData = {
+      user_response: message,
+      newsession: newSession
+    };
+    try {
+      setIsLoading(true);
+      const response = await fetch(CHAT_API_URL, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',  
+        body: JSON.stringify(formData)
+      });
+      const data = await response.json();
+      setIsLoading(false);
+      return data.response
+    } catch (error) {
+      console.error("Error:", error)
+      setIsLoading(false)
+      return "Oops! Something went wrong."
+    }
+  }
+
+  const handleSend = async (message = null) => {
+    if (message === null && !input.trim()) return
+
+    setMessages((prevMessages) => {
+      const lastMessageIndex = prevMessages.length - 1
+      if (prevMessages[lastMessageIndex]?.options) {
+        prevMessages[lastMessageIndex].disabled = true
+      }
+      return [...prevMessages];
+    });
+
+    const userMessage = createChatMessage(message || input.trim(), "outgoing", "text", null)
+    setMessages([...messages, userMessage]);
+    setInput("")
+
+    let newSession = (!sessionStorage.getItem('chatbotMessages')) || messages.length <= 2
+
+    console.log(sessionStorage.getItem('sessionId'), messages.length <= 2)
+    const botResponse = await sendMessageToAPI(userMessage.text, newSession)
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      createChatMessage(botResponse, "incoming", "text", [])
+    ]);
+  };
+
+  const handleInputChange = (e) => {
+    setInput(e.target.value);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  return (
+    <div className="chatbot-container">
+      <div className="chatbot">
+        <header className="chatbot-header">
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <img src="/apollo.svg" alt="Chatbot Icon" style={{ width: 40, height: 40, borderRadius: '30%', objectFit: 'fit', backgroundColor: 'white' }} />
+            <h2 style={{ marginLeft: 10 }}>{config.chatbotHeader.title}</h2>
+          </div>
+          <button className="close-btn" onClick={() => document.body.classList.remove('show-chatbot')}>{config.chatbotHeader.closeButton.text}</button>
+        </header>
+        <ul className="chatbox" ref={chatboxRef}>
+          {messages.map((msg, index) => (
+            <li key={index} className={`chat ${msg.type}`}>
+              {msg.type === "incoming" && (
+                <>
+                  <div>
+                    <Icon
+                      icon={config.icons.botIcon.name}
+                      style={{
+                        ...config.icons.botIcon.style,
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <p style={{ fontSize: '0.6rem', right: 0, bottom: 0, padding: 0, marginLeft: '10px', background: 'none' }}>{msg.timestamp}</p>
+                    <div className="message-container">
+                      <p>{msg.text}</p>
+                    </div>
+                    {msg.options && msg.options.length > 0 && (
+                      <div className="options">
+                        {msg.options.map((option, i) => (
+                          <button key={i} onClick={() => handleSend(option)} disabled={msg.disabled}>
+                            {option}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {/* <TimeSlots /> */}
+                    {/* <FeedbackRating maxStars={5} question="How would you rate our service?" /> */}
+                  </div>
+                </>
+              )}
+              {msg.type === "outgoing" && msg.format === "text" && (
+                <>
+                  <div>
+                    <p style={{ fontSize: '0.6rem', right: 0, bottom: 0, padding: 0, marginRight: '30px', background: 'none', color: 'black', textWrap: 'nowrap' }}>{msg.timestamp}</p>
+                    <div className="message-container">
+                      <p>{msg.text}</p>
+                      <Icon icon={config.icons.userIcon.name} style={config.icons.userIcon.style} />
+                    </div>
+                  </div>
+                </>
+              )}
+              {msg.type === "outgoing" && msg.format === "audio" && (
+                <div className="message-container">
+                  <p style={{ fontSize: '0.7rem' }}>{msg.timestamp}</p>
+                  <AudioPlayer ref={audioRef} className="styled-audio" src={msg.audioSrc} controls />
+                </div>
+              )}
+            </li>
+          ))}
+          {isLoading && (
+            <div className="chat loading-indicator flex items-center space-x-2">
+              <Icon
+                icon={config.icons.botIcon.name}
+                style={{
+                  ...config.icons.botIcon.style,
+                }}
+              />
+              <img src={'/messageloader.svg'} alt="Loader" className="chat-icon-loader" />
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </ul>
+        <div className={`chat-input ${isInputDisabled ? 'disabled' : ''}`}>
+          <input
+            value={input}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            placeholder="Enter a message..."
+            spellCheck="false"
+            required
+            disabled={isInputDisabled}
+          />
+          {/* <AudioRecorder onStop={handleStopRecording} setIsRecording={setIsRecording} deleteButton={deleteButton} onDelete={handleDeleteRecording} /> */}
+          <button className="send-btn" onClick={handleSend} disabled={!input.trim() || isLoading}>
+            <Icon icon={config.icons.sendButtonIcon.name} style={config.icons.sendButtonIcon.style} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ChatBotUI;
