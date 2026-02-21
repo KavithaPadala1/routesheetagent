@@ -1,6 +1,6 @@
 # GasOps Routesheet AI Backend - Fabric
 # Overview
-FastAPI-based backend service for GasOps Transmission AI, providing intelligent and conversational natural language query processing using Azure and Fabric.
+FastAPI-based backend service for GasOps Routesheet AI, providing intelligent and conversational natural language query processing using Azure and Fabric.
 
 # Prerequisites
 - Python 3.12.5 
