@@ -1,26 +1,13 @@
-Routesheet SCHEMA:
+Gas Operations Route Sheet SCHEMA:
 
-ROUTE SHEET TYPES:
-- Gas Operations Route Sheet: cedemo_RouteSheetHeader, cedemo_RouteSheetTicketDetails, cedemo_RSAssignedEmployeeDetails, cedemo_RSLeaveEmployeeDetails
-- CM Route Sheet: cedemo_ContractorRouteSheetTicketDetails, cedemo_ContractorRSAssignedEmployeeDetails
-- Tunnels Route Sheet: cedemo_TunnelsRouteSheetHeader, cedemo_TunnelsRSAssignedEmployeeDetails, cedemo_TunnelsRSLeaveEmployeeDetails
-- Second Inspector Route Sheet: (no tables defined yet)
-- Corrosion Route Sheet: cedemo_CorrosionRouteSheetHeader, cedemo_CorrosionRSAssignedEmployeeDetails, cedemo_CorrosionRSLeaveEmployeeDetails
-- Leak Survey Route Sheet: cedemo_ContractorsLeakSurveyEmployeeScheduleDetails
-- SLI Route Sheet: cedemo_CompanySLIEmployeeScheduleDetails, cedemo_ContractorsSLIEmployeeScheduleDetails, cedemo_ContractorsMLRSLIEmployeeScheduleDetails
-
----
-
-## TYPE: Gas Operations Route Sheet
-
-TABLE : cedemo_RouteSheetHeader
+TABLE : vm_cedemo_routesheetheader
 Description: Stores header-level information for each route sheet, including scheduling details, assigned personnel, contact information, and status tracking.
 Columns:
 - RouteSheetID (bigint): Unique identifier for the route sheet record.
 - RouteSheetDate (datetime2): Date and time associated with the route sheet.
 - RouteSheetDay (varchar): Day of the week for the route sheet.It can have Mon,Monday,Tue,Tuesday,Wed,Wednesday,Thu,Thursday,Fri,Friday,Sat,Saturday,Sun,Sunday
 - Shift (varchar): Shift designation for the route sheet. It can have Night,Day,Midnight
-- Region (varchar): Region associated with the route sheet. It can have 'X' , 'M' , 'Q' , and 'W'.
+- Region (varchar): Region associated with the route sheet. It can have 'X' , 'M' , 'Q' , and 'W'.X → Bronx , M → Manhattan, Q → Queens, W → Westchester.
 - District (varchar): District within the region for the route sheet.
 - SectionManagerID (bigint): Identifier of the section manager assigned to the route sheet.
 - ManagerPhone (varchar): Phone number of the section manager.
@@ -32,11 +19,9 @@ Columns:
 - EHSHotline (varchar):
 - RouteSheetStatus (varchar): Current status of the route sheet.It can have Submitted, NULL
 - IsActive (bit): Indicates whether the route sheet record is active. Always consider IsActive=1
-- CreatedBy (int): Identifier of the user who created the record.
-- CreatedDate (datetime2): Date and time when the record was created.
-- ModifiedBy (int): Identifier of the user who last modified the record.
-- ModifiedDate (datetime2): Date and time when the record was last modified.
 - AdditonalNotes (varchar): Additional Notes
+- category (varchar) : routesheet category. It contains District , Capital , NULL values.
+- Yard (varchar) : Yard name
 
 TABLE : cedemo_RouteSheetTicketDetails
 Description: Stores ticket-level details associated with a route sheet, including work order information, inspection assignments, second inspector tracking, and operational flags.
@@ -55,10 +40,6 @@ Columns:
 - Flagger (varchar): Indicates whether a flagger is required.
 - FusingReq (varchar): Indicates whether fusing is required.
 - IsActive (bit): Indicates whether the ticket details record is active.
-- CreatedBy (int): Identifier of the user who created the record.
-- CreatedDate (datetime2): Date and time when the record was created.
-- ModifiedBy (int): Identifier of the user who last modified the record.
-- ModifiedDate (datetime2): Date and time when the record was last modified.
 - EmergencyPermit (varchar): Indicates whether an emergency permit is associated with the ticket.
 - FlaggerQuantity (varchar): Number of flaggers required for the work.
 - MarkoutDescription (varchar): Description of the markout requirements.
@@ -95,14 +76,10 @@ Columns:
 - PhoneRadioNumber (varchar): Phone or radio number used to contact the employee.
 - RouteSheetWorkDescriptionID (bigint): Identifier referencing the work description assigned to the employee.
 - WorkDescription (varchar): Description of the work assigned to the employee.
-- Qualified (varchar): Indicates whether the employee is qualified for the assigned work.
+- Qualified (varchar): Indicates whether the employee is qualified for the assigned work. Has 'Yes' , 'No' values.
 - QualificationValidatedDate (datetime2): Date and time when the employee's qualification was validated.
 - IsDeleted (bit): Indicates whether the assigned employee record has been soft-deleted.
-- CreatedBy (int): Identifier of the user who created the record.
-- CreatedDate (datetime2): Date and time when the record was created.
-- ModifiedBy (int): Identifier of the user who last modified the record.
-- ModifiedDate (datetime2): Date and time when the record was last modified.
-- EmployeeDISAPool (varchar):
+- EmployeeDISAPool (varchar): Employee DISA Pool .It contains values like PHMSA,3,NULL, ''.
 - MissingCoveredTasks (varchar): Lists required covered tasks that the employee has not completed. Multiple tasks may be stored as semicolon-separated values.
 
 TABLE : cedemo_RSLeaveEmployeeDetails
@@ -118,17 +95,14 @@ Columns:
 - ReasonForAbsence (varchar): Reason for the employee's absence.
 - Comments (varchar): Additional comments regarding the employee's leave.
 - IsDeleted (bit): Indicates whether the leave record has been soft-deleted. ALways consider IsDeleted=0
-- CreatedBy (int): Identifier of the user who created the record.
-- CreatedDate (datetime2): Date and time when the record was created.
-- ModifiedBy (int): Identifier of the user who last modified the record.
-- ModifiedDate (datetime2): Date and time when the record was last modified.
+
 
 
 
 RELATIONSHIPS:
-- cedemo_RouteSheetHeader.RouteSheetID = cedemo_RouteSheetTicketDetails.RouteSheetID
+- vm_cedemo_routesheetheader.RouteSheetID = cedemo_RouteSheetTicketDetails.RouteSheetID
 - cedemo_RouteSheetTicketDetails.RouteSheetTicketDetailsID = cedemo_RSAssignedEmployeeDetails.RouteSheetTicketDetailsID
-- cedemo_RouteSheetHeader.RouteSheetID = cedemo_RSLeaveEmployeeDetails.RouteSheetID
+- vm_cedemo_routesheetheader.RouteSheetID = cedemo_RSLeaveEmployeeDetails.RouteSheetID
 - cedemo_RouteSheetTicketDetails.RouteSheetWorkDescriptionID = cedemo_RSAssignedEmployeeDetails.RouteSheetWorkDescriptionID
 - cedemo_RouteSheetTicketDetails.WorkDescription = cedemo_RSAssignedEmployeeDetails.WorkDescription
 - cedemo_RSAssignedEmployeeDetails.ITSID = cedemo_RSLeaveEmployeeDetails.ITSID
@@ -136,7 +110,7 @@ RELATIONSHIPS:
 - cedemo_RSAssignedEmployeeDetails.EmployeeName = cedemo_RSLeaveEmployeeDetails.EmployeeName
 
 FILTER CONDITIONS (ALWAYS APPLY):
-- cedemo_RouteSheetHeader.IsActive = 1
+- vm_cedemo_routesheetheader.IsActive = 1
 - cedemo_RouteSheetTicketDetails.IsActive = 1
 - cedemo_RSAssignedEmployeeDetails.IsDeleted = 0
 - cedemo_RSLeaveEmployeeDetails.IsDeleted = 0

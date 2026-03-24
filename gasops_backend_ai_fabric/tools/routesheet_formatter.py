@@ -39,8 +39,11 @@ General Guidelines:
 
 What NOT to do:
 - NEVER return raw SQL results or JSON data or technical jargon in the response to the user. 
+- Never change the sql results data or manually count rows for counts. Always use the data as is from SQL results.
 - Do not mention phrases like "based on the SQL results" or "here is easy to read". Instead, directly answer the user's question .
 - Do not use <br> html tags for line breaks in the response.
+- Do not count rows manually for counts. Always use the count from SQL results if available.
+- Do not mention the word "Suggested next question"; instead, directly suggest that question.
 
 ## Core Behaviour Rules:
 1. Understand the user’s intent first, then format accordingly.
@@ -51,6 +54,7 @@ What NOT to do:
 4. Never ask if the user wants the full list.
 5. If the user says "show all", display all rows (no preview).
 6. If result includes a count column from SQL, use that count. Never manually count rows.
+7. Whenever showing results for future date ,always mention At present or Currently in the response as the results are future date.
 
 ## Formatting Guidelines:
 1.General :
@@ -58,6 +62,8 @@ What NOT to do:
      - Understand the user question and format the results accordingly for better readability.If user specifically asks any format please format the response as requested .eg : Can you show me the full inspection details in a structured table format--- here show the results in a table format.
      - Never ask or suggest to show full list.
      - If any column values has same value for all rows then simply mention that in starting sentence instead of showing that column in table or bullet points. eg: If all the routesheets in the result are from same region then simply mention that in starting sentence instead of showing region column in table or bullet points.     
+     - If any column name is NULL and has no values then do not show that column in the response.
+     
 2. **Structure**:
    - Start with an intro line mentioning the count (e.g., "There are X route sheets today in the Bronx region..")
    - Present the data clearly either in bullet points, short paragraphs, sections with headers, or tables as appropriate to show to the user based on the context and the data.
@@ -66,13 +72,21 @@ What NOT to do:
    - Keep the tone conversational, professsional and engaging to enhance user experience.
 
 3. **Format Selection**:
-   - Use **Markdown tables** only for multi-column and multi-row results with less than 10 rows and greater than 5 rows for better readability.
+   - Use **Markdown tables** only for multi-column and multi-row results with less than 13 rows and greater than 3 rows for better readability.
    - Use **bullet points or short paragraphs** for:
      - Single-column results and rows less than 5 or greater than 15 for better readability.
      - When better readability is achieved
    - Always choose the format that maximizes clarity and user understanding.
    - If user explicitly requests a table → Always use a Markdown table.
 
+# Quick formatting patterns:
+ - Are there any OQ Exceptions in gas ops bronx route?
+ <if results exists for both District and Capital category always show the details in serperate section along with the count in a markdown table>
+ TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| OQ Exception Crew |
+
+- DISA Exception details
+always show for each category seperately along with the count in a markdown table if results exists for both District and Capital category
+ TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| DISA Exception Crew |
 """
         
         # Call LLM to format the results
@@ -81,7 +95,7 @@ What NOT to do:
             messages=[
                 {"role": "system", "content": "You are a helpful assistant that formats data into clear, user-friendly responses."},
                 {"role": "user", "content": formatting_prompt}
-            ]
+            ],
             # temperature=0.1  # Lower temperature for consistent formatting
         )
         

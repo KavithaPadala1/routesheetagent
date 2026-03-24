@@ -70,8 +70,8 @@ async def name_clarifier_llm(query: str, auth_token=None):
                 {"role": "system", "content": "You extract person and company names from queries. Ignore field names, technical terms, and column references. Return only JSON format."},
                 {"role": "user", "content": extraction_prompt}
             ],
-            temperature=0,
-            max_tokens=150
+            # temperature=0,
+            max_completion_tokens=150
         )
         
         extracted_json = response.choices[0].message.content.strip()
@@ -383,8 +383,8 @@ async def handle_all_single_matches(original_query: str, clarifications: list):
                 {"role": "system", "content": "You rewrite queries by replacing ambiguous names with clarified names and categories. Return only the rewritten query."},
                 {"role": "user", "content": rewrite_prompt}
             ],
-            temperature=0,
-            max_tokens=200
+            # temperature=0,
+            max_completion_tokens=200
         )
         
         rewritten_query = response.choices[0].message.content.strip()
@@ -460,8 +460,8 @@ async def handle_multiple_names_clarification(original_query: str, clarification
                 {"role": "system", "content": "You filter irrelevant name matches. Be strict about phonetic matches - only keep if names are actually the same. Return only the filtered JSON array with the same structure as the input."},
                 {"role": "user", "content": filtering_prompt}
             ],
-            temperature=0,
-            max_tokens=1000
+            # temperature=0,
+            max_completion_tokens=1000
         )
         
         filtered_json = filter_response.choices[0].message.content.strip()
@@ -591,8 +591,8 @@ async def handle_multiple_names_clarification(original_query: str, clarification
                 {"role": "system", "content": "You create friendly clarification messages that confirm single matches and ask for selection on multiple matches."},
                 {"role": "user", "content": clarification_prompt}
             ],
-            temperature=0.7,
-            max_tokens=300
+            # temperature=0.7,
+            max_completion_tokens=300
         )
         
         clarification_message = response.choices[0].message.content.strip()

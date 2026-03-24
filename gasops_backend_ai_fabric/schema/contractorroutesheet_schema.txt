@@ -1,0 +1,116 @@
+Contractor/CM Routesheet Schema:
+
+
+# TABLE : cedemo_ContractorRouteSheetTicketDetails
+Description:  
+Stores ticket-level information for contractor route sheets, including work order details, inspection assignments, permit and safety requirements, crew and inspector tracking, job ownership, and overall status management.
+## Columns:
+- ContractorRouteSheetTicketDetailsID (bigint): Unique identifier for the contractor route sheet ticket details record.
+- VendorCode (varchar): Code identifying the contractor or vendor responsible for the work.
+- RouteSheetDate (datetime2): Date and time associated with the route sheet.
+- RouteSheetDay (varchar): Day of the week for the route sheet. Can have these values Monday,Tuesday,Wednesday,Thursday,Friday, Saturday
+- TicketNumber (varchar): Unique ticket number associated with the job.
+- WorkOrderID (bigint): Identifier of the related work order.can have -1
+- WorkLocation (varchar): Location where the work is performed.
+- ContractorRouteSheetWorkDescriptionID (bigint): Identifier linking to the contractor work description record.
+- WorkDescription (varchar): Description of the work to be performed.
+- WorkType (varchar): Type or category of work. WorkType can have NULL so always apply where Workype is not NULL.
+- InspectorCoveringID (bigint): Identifier of the inspector covering the job.
+- InspectorCoveringName (varchar): Name of the inspector covering the job.
+- InspectorOwnsJobID (bigint): Identifier of the inspector who owns the job.
+- InspectorOwnsJobName (varchar): Name of the inspector who owns the job.
+- PermitHoursFrom (varchar): Permit start time for the job.
+- PermitHoursTo (varchar): Permit end time for the job.
+- Region (varchar): Region where the job is executed.
+- Muni (varchar): Municipality associated with the job location.
+- PFSNumber (varchar): PFS reference number for the job.
+- NumberOfRelights (varchar): Number of relights required for the job.
+- Contigency (varchar): Indicates whether contingency applies to the job. Has Yes, No values
+- ContingencyNumber (varchar): Reference number associated with the contingency.
+- HoldPoint (varchar): Indicates whether a hold point is required.Has Yes, No values
+- HoldPointTime (varchar): Time associated with the hold point.
+- FusingPeerNeed (varchar): Indicates whether a fusing peer is required. Has Yes, No values
+- FusingPeerNeedTime (varchar): Time associated with the fusing peer requirement.
+- EmployeeIDs (varchar): List of employee IDs assigned to the job. Has comma sperated values
+- ITSIDEmployeeNames (varchar): ITS IDs of employees assigned to the job. Has comma sperated values
+- EmployeeNames (varchar): Names of employees assigned to the job. Has comma seperated values
+- RouteSheetStatus (varchar): Current status of the route sheet ticket. Has Submitted values
+- IsActive (bit): Indicates whether the record is active. Always apply IsActive=1
+- ForemanEmployeeID (varchar): Employee ID of the foreman assigned to the job.
+- ForemanITSIDEmployeeName (varchar): ITSID of the foreman.
+- ForemanEmployeeName (varchar): Name of the foreman.
+- Code753 (varchar): Indicates whether Code 753 applies to the job.
+- HelperEmployeeNames (varchar): Names of helper employees assigned to the job. Has semicolon sperated values like Avila Juan;Garcia Jesus;Luna
+- HelperEmployeeIDs (varchar): Employee IDs of helper employees.Has semicolon seperated values like 23846;23851;
+- CMReviewedByID (bigint): Identifier of the construction manager who reviewed the job.
+- CMReviewedByName (varchar): Name of the construction manager who reviewed the job.
+- CMReviewedByDate (datetime2): Date when the construction manager reviewed the job.
+- JobOwnerID (bigint): Identifier of the job owner.
+- JobOwnerName (varchar): Name of the job owner.
+- GasOutAddresses (varchar): Addresses where gas outage is required.
+- SpecialCondition (varchar): Special conditions associated with the job. It has values New Job;Contingency Job, New Job. semicolon sperated.
+- FlaggersPolice (varchar): Indicates whether flaggers or police are required. Has these values NULL,Both,Police,None
+- StateRoad (varchar): Indicates whether the job is on a state road. Has Yes, No values
+- PermitNumber (varchar): Permit number associated with the job.
+- PermitExpiry (datetime2): Expiration date of the permit.
+- PONumber (varchar): Purchase order number associated with the job.
+- LayoutNumber (varchar): Layout number for the job.
+- FusingPeerNeedCount (varchar): Number of fusing peers required.
+- AssignedSecondInspectorVendorCode (varchar): Vendor code of the assigned second inspector.
+- SecondInspectorAssignedByCrew (varchar): Crew responsible for assigning the second inspector.
+- SecondInspectorAssignedByID (varchar): Identifier of the person who assigned the second inspector.
+- SecondInspectorAssignedByName (varchar): Name of the person who assigned the second inspector.
+- SecondInspectorCrew (varchar): Crew assigned as second inspector.
+- SecondInspectorVendorCode (varchar): Vendor code of the second inspector.
+- SecondInspectorEmployeeMasterID (varchar): Employee master ID of the second inspector.
+- SecondInspectorNameITSID (varchar): ITS ID of the second inspector.
+- SecondInspectorAddUpdateByID (varchar): Identifier of the person who added or updated the second inspector.
+- SecondInspectorAddUpdateByName (varchar): Name of the person who added or updated the second inspector.
+- SecondInspectorQualified (varchar): Indicates whether the second inspector is qualified. Has Yes, No, NULL.
+- SecondInspectorDISAPool (varchar): Indicates whether the second inspector is from the DISA pool. Has NULL,PHMSA
+- SecondInspectorCancelled (bit): Indicates whether the second inspector assignment was cancelled. Has 1,0,NULL.
+- SecondInspectorCancelledDate (datetime2): Date when the second inspector assignment was cancelled.
+- SecondInspectorNotes (varchar): Additional notes related to the second inspector.
+
+
+
+# TABLE : cedemo_ContractorRSAssignedEmployeeDetails
+Description:  
+Stores employee-level assignment details for contractor route sheet tickets, including employee identification, roles, qualifications, work assignments, and audit tracking information.
+## Columns:
+- ContractorRSAssignedEmployeeDetailsID (bigint): Unique identifier for the contractor route sheet assigned employee details record.
+- ContractorRouteSheetTicketDetailsID (bigint): Identifier linking the employee assignment to a contractor route sheet ticket.
+- ITSID (varchar): ITS identifier of the assigned employee.
+- EmployeeName (varchar): Full name of the assigned employee.
+- EmployeeMasterID (varchar): Master employee identifier.
+- ITSRole (varchar): Role of the employee in ITS for the assigned job.
+- TruckNumber (varchar): Truck number assigned to the employee.
+- PhoneRadioNumber (varchar): Phone or radio number assigned to the employee.
+- ContractorRouteSheetWorkDescriptionID (bigint): Identifier linking to the contractor work description.
+- WorkDescription (varchar): Description of the work assigned to the employee.
+- Qualified (varchar): Indicates whether the employee is qualified for the assigned work.
+- QualificationValidatedDate (datetime2): Date when the employee’s qualification was validated.
+- IsDeleted (bit): Indicates whether the employee assignment record is deleted. Always consider IsDeleted=0
+- JobRole (varchar): Job role assigned to the employee for the route sheet ticket.
+- EmployeeDISAPool (varchar): Indicates whether the employee belongs to the DISA pool.
+- MissingCoveredTasks (varchar): List of required tasks that are missing or not covered by the employee.
+
+
+# TABLE: cedemo_ContractorMaster
+Description: Master table for Contractor names
+## Columns:
+- ContractorName (varchar) : Contractor full name
+- ContractorDisplayName (varchar) : Contractor display name
+- VenderCode (varchar) : contractor vender code to map with ContractorName
+- IsActive (bit): Always consider IsActive=1
+
+
+RELATIONSHIPS:
+cedemo_ContractorRouteSheetTicketDetails.ContractorRouteSheetTicketDetailsID = cedemo_ContractorRSAssignedEmployeeDetails.ContractorRouteSheetTicketDetailsID
+cedemo_ContractorRouteSheetTicketDetails.VendorCode = cedemo_ContractorRSAssignedEmployeeDetails.VendorCode
+
+
+FILTER CONDITIONS (ALWAYS APPLY):
+- cedemo_ContractorRouteSheetTicketDetails.IsActive =1
+- cedemo_ContractorRSAssignedEmployeeDetails.IsDeleted = 0
+- cedemo_ContractorMaster.IsActive =1

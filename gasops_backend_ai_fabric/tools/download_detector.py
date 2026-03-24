@@ -1,86 +1,3 @@
-# import os
-# from openai import AzureOpenAI
-# import logging
-
-# logger = logging.getLogger(__name__)
-
-# client = AzureOpenAI(
-#     api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-#     api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
-#     azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
-# )
-
-# SYSTEM_PROMPT = """You are a download request detector. Your job is to determine if the user is asking to download, export, or save the response as DOCX (Word document).
-
-# Return a JSON response with:
-# - "wants_download": true/false
-# - "format_preference": "docx"
-# - "friendly_message": "Here's your download link:" (no questions, just direct confirmation)
-
-# Examples of download requests:
-# Examples of download requests:
-# - "Can I download this?" → wants_download: true, format_preference: "docx", friendly_message: "Sure! I've prepared your document for download."
-# - "Export to Word" → wants_download: true, format_preference: "docx", friendly_message: "Your Word document is ready!"
-# - "Save this response" → wants_download: true, format_preference: "docx", friendly_message: "I've created a document with the previous response for you."
-# - "Give me a document" → wants_download: true, format_preference: "docx", friendly_message: "Here's your document!"
-# - "I want to download this" → wants_download: true, format_preference: "docx", friendly_message: "Your download is ready!"
-# - "Generate a Word file" → wants_download: true, format_preference: "docx", friendly_message: "I've generated a Word document for you."
-# - "Download as DOCX" → wants_download: true, format_preference: "docx", friendly_message: "Your DOCX file is ready to download!"
-# - "Can you export this?" → wants_download: true, format_preference: "docx", friendly_message: "Done! Your export is ready."
-
-# Examples of NON-download requests:
-# - "What is the status?" → wants_download: false
-# - "Show me the data" → wants_download: false
-# - "Tell me more" → wants_download: false
-# - "Explain this" → wants_download: false
-# - "What are the details?" → wants_download: false
-
-# Be strict: only return wants_download=true if user explicitly asks for download/export/save/document.
-
-# IMPORTANT: Only DOCX format is supported. Excel downloads are handled separately."""
-
-# def detect_download_request(user_query: str) -> dict:
-#     """
-#     Detect if user is asking to download/export the response as DOCX
-    
-#     Args:
-#         user_query: The user's question
-        
-#     Returns:
-#         dict with keys:
-#         - wants_download (bool): True if user wants to download
-#         - format_preference (str): Always "docx"
-#         - friendly_message (str): Direct message (no questions)
-#     """
-#     try:
-#         response = client.chat.completions.create(
-#             model=os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-5-chat"),
-#             messages=[
-#                 {"role": "system", "content": SYSTEM_PROMPT},
-#                 {"role": "user", "content": user_query}
-#             ],
-#             temperature=0.1,
-#             max_tokens=200,
-#             response_format={"type": "json_object"}
-#         )
-        
-#         import json
-#         result = json.loads(response.choices[0].message.content)
-        
-#         logger.info(f"Download detection for '{user_query}': {result}")
-#         return result
-        
-#     except Exception as e:
-#         logger.error(f"Error detecting download request: {e}", exc_info=True)
-#         # Default: don't show download links if detection fails
-#         return {
-#             "wants_download": False,
-#             "format_preference": "docx",
-#             "friendly_message": ""
-#         }
-
-
-
 
 import os
 from openai import AzureOpenAI
@@ -160,8 +77,8 @@ def detect_download_request(user_query: str) -> dict:
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_query}
             ],
-            temperature=0.1,
-            max_tokens=200,
+            # temperature=0.1,
+            max_completion_tokens=200,
             response_format={"type": "json_object"}
         )
         

@@ -13,7 +13,7 @@ class BlobLogHandler(logging.Handler):
     def __init__(self):
         super().__init__()
         self.connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
-        self.container_name = "gasopstransmissionailogs"
+        self.container_name = "gasopsroutesheetlogs"
         self.log_queue = queue.Queue()
         self.flush_delay = 5  # Write 5 seconds after last log
         self.retention_days = 30

@@ -1,3 +1,5 @@
+# Main entry point for FASAPI backend API
+
 from fastapi import FastAPI, Header, Body, Response, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional, Any, Dict
@@ -117,33 +119,6 @@ def encode_base64(text: str) -> str:
         return None
     text_bytes = text.encode('utf-8')
     return base64.b64encode(text_bytes).decode('utf-8')
-
-
-
-# # Helper function to detect markdown tables in response
-
-# def has_markdown_table(text: str) -> bool:
-#     """
-#     Check if the text contains a markdown table
-#     Returns True if markdown table is found, False otherwise
-#     """
-#     if not text:
-#         return False
-    
-#     # Pattern to match markdown tables
-#     # Looks for lines with pipes (|) and a separator line with dashes
-#     lines = text.split('\n')
-#     for i in range(len(lines) - 1):
-#         current_line = lines[i].strip()
-#         next_line = lines[i + 1].strip()
-        
-#         # Check if current line has pipes and next line is a separator
-#         if '|' in current_line and '|' in next_line:
-#             # Check if next line is a separator (contains dashes and pipes)
-#             if re.match(r'^[\|\s\-:]+$', next_line):
-#                 return True
-    
-#     return False
 
 
 
@@ -533,6 +508,8 @@ async def ask(
     if not isinstance(rows, list):
         rows = None
 
+    sql_query = result.get("sql_query") if isinstance(result, dict) else None
+
     skey = body.session_id or body.token
     if not skey or skey in ("null", "None", ""):
         skey = "sess_" + uuid4().hex[:12]
@@ -663,7 +640,8 @@ async def ask(
         "timestamp": timestamp_bot,
         "context": context_list,
         "user_details": user_details,
-        "decrypted_fields": decrypted_fields
+        "decrypted_fields": decrypted_fields,
+        **({"sql_query": sql_query} if sql_query else {})
     }
     
     # Only include export info if we have download URLs
@@ -672,30 +650,7 @@ async def ask(
 
     return response_data
 
-@app.post("/api/eventgrid")
-async def eventgrid_webhook(request: Request):
-    """Azure Event Grid webhook for automatic PDF indexing"""
-    try:
-        events = await request.json()
-        logger.info(f"Received Event Grid webhook with {len(events) if isinstance(events, list) else 1} event(s)")
-        
-        if isinstance(events, list) and len(events) > 0:
-            first_event = events[0]
-            
-            if first_event.get('eventType') == 'Microsoft.EventGrid.SubscriptionValidationEvent':
-                validation_code = first_event['data']['validationCode']
-                logger.info(f"Validation event received, returning validation code")
-                return {"validationResponse": validation_code}
-        
-        from tools.event_grid_handler import handle_blob_events
-        result = handle_blob_events(events)
-        logger.info(f"Processed {result['processed']} events, {result['failed']} failed")
-        
-        return {"status": "success", "result": result}
-        
-    except Exception as e:
-        logger.error(f"Error in Event Grid webhook: {e}", exc_info=True)
-        return {"error": str(e)}, 500
+    
 
 
 @app.get("/export/message/{message_id}")

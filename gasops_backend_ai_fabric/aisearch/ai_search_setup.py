@@ -19,10 +19,11 @@ load_dotenv()
 
 
 
+
 # Azure configuration
-azure_openai_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
-azure_openai_api_key = os.getenv("AZURE_OPENAI_API_KEY")
-azure_openai_api_version = os.getenv("AZURE_OPENAI_API_VERSION")
+azure_embedding_endpoint = os.getenv("AZURE_EMBEDDING_ENDPOINT")
+azure_embedding_api_key = os.getenv("AZURE_EMBEDDING_API_KEY")
+azure_embedding_api_version = os.getenv("AZURE_EMBEDDING_API_VERSION")
 
 azure_embedding_deployment = os.getenv("AZURE_SEARCH_DEPLOYMENT")   # Embedding deployment name
 
@@ -30,14 +31,15 @@ vector_store_address = os.getenv("AZURE_SEARCH_ENDPOINT")
 vector_store_password = os.getenv("AZURE_SEARCH_KEY")
 
 
-index_name = "weldexamples"
+
+index_name = "gasopsroutesheetindex"  # Azure Search index name
 
 # Initialize embeddings
 embeddings = AzureOpenAIEmbeddings(
     azure_deployment=azure_embedding_deployment,
-    openai_api_version=azure_openai_api_version,
-    azure_endpoint=azure_openai_endpoint,
-    api_key=azure_openai_api_key,
+    openai_api_version=azure_embedding_api_version,
+    azure_endpoint=azure_embedding_endpoint,
+    api_key=azure_embedding_api_key,
 )
 
 # Function to initialize AzureSearch
@@ -84,8 +86,8 @@ def perform_similarity_search(vector_store, query: str, k: int):
 if __name__ == "__main__":
     vector_store = None 
     try:
-        vector_store = initialize_vector_store(index_name="weldexamples")
-        docs = process_documents("weldexamples.txt")    # path to the examples txt file to index
+        vector_store = initialize_vector_store(index_name="gasopsroutesheetindex")
+        docs = process_documents("gasopsroutesheet_examples.txt")    # path to the examples txt file to index
         vector_store.add_documents(documents=docs)
         
     finally:

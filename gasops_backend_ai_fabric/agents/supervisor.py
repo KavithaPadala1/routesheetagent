@@ -9,7 +9,13 @@ from zoneinfo import ZoneInfo
 import os
 
 # Import agent handlers
-from agents.routesheetagent import handle_routesheet
+from agents.gasoperationsroutesheetagent import handle_gasoperationsroutesheet
+from agents.contractorroutesheetagent import handle_contractorroutesheet
+# from agents.tunnelsroutesheetagent import handle_tunnelsroutesheet_agent
+# from agents.secondinspectorroutesheetagent import handle_second_inspectorroutesheet_agent
+# from agents.corrosionroutesheetagent import handle_corrosionroutesheet_agent
+# from agents.leaksurveyroutesheetagent import handle_leaksurveyroutesheet_agent
+# from agents.sliroutesheetagent import handle_sliroutesheet_agent
 from tools.numberclarifier import number_clarifier_llm
 from tools.nameclarifier import name_clarifier_llm
 
@@ -59,7 +65,7 @@ async def supervisor(query, database_name=None, auth_token=None, clarification_d
         
         Context:
         - Today's date is {current_date}, current year is {current_year}, and the time is {time}.
-        - Always greet the user if they greet you and say I can help you with information about the oq fundamentals, routesheets, and fusion. Do not give previous context in responses to greetings.
+        - Always greet the user if they greet you and say I can help you with information about the routesheets. Do not give previous context in responses to greetings.
         - If the user asks a general question (e.g., about today's date, weather, general engineering, design calculations, standards, formulas, or topics about pipe properties, MAOP, wall thickness, steel grade, ASME codes, etc.), answer it directly and concisely and do not invoke any agent.
         - For weather questions, if you do not have real-time data, provide an approximate.
         - If the user's question is a follow-up (short or ambiguous) to a previous domain-specific question, route it to the same agent as before unless the intent clearly changes.
@@ -68,29 +74,32 @@ async def supervisor(query, database_name=None, auth_token=None, clarification_d
         Tools:
         You have these two tools when user questions has number or name ambiguity:
         1. numberclarifier : Use 'numberclarifier' tool ONLY if the query contains an ambiguous number WITHOUT a category prefix (e.g., "G23309" is ambiguous, but "ProjectNumber G23309" is NOT ambiguous).
-            Example ambiguous: "How many engineers are handling G23309?" -- number G23309 needs clarification
-                               "repaired welds in 101086750 ACCUWELD?" -- number 101086750 ACCUWELD needs clarification as it can be alphanumeric also
-            Example clear: "who is the engineer for ProjectNumber G23309?" -- already clarified, route to agent
-                            " give me details of work order ending/starting with 514" -- already clarified as work order number, route to agent
-            Note: Even if user is asking a verification question (e.g., "Is X a work order number?"), still use numberclarifier to identify what X actually is.
+            Example ambiguous: "show me details for 1234" -- number 1234 needs clarification
+            Example clear: "show me details for ITSID 7653?" -- already clarified, route to agent
+            Note: Even if user is asking a verification question (e.g., "Is X a ITSID or EmployeeID?"), still use numberclarifier to identify what X actually is.
         
         2. nameclarifier : Use 'nameclarifier' tool ONLY if the query contains an ambiguous name WITHOUT a role prefix.
-            Example ambiguous: "give me the work orders assigned to manju" -- name manju needs clarification
-            Example clear: "give me the work orders assigned to WelderName manju" -- already clarified, route to agent
-            Example clear: "give me the list of work orders supervised by Waqar" -- already clarified as supervised means SupervisorName, route to agent.
-            Example ambiguous : Give me the projects assigned to Shaw Pipeline Services
+            Example ambiguous: "give me the tickets assigned to manju" -- name manju needs clarification
+            Example clear: "give me the tickets assigned to employee manju" -- already clarified, route to agent
+            Example clear: "give me the tickets handled by secondinspector Waqar" -- already clarified as supervised means SupervisorName, route to agent.
+            Example ambiguous : Give me the tickets assigned to Shaw Pipeline Services
         - These tools will return either the actual category of the number/name OR a direct answer for verification questions.
         
         Available agents and their domains:
-        1. routesheetagent : Handles any queries related to routesheets like company routesheet, contractor routesheets like gasoperations routesheet, CWINDE routesheet, CM routesheet, facility routesheet, speciality routesheet.
+        1. gasoperationsroutesheetagent : Handles any queries related to gas operations routesheets.
+        2. contractorroutesheetagent : Handles queries related to CM or contractor routesheets.
+        3. tunnelsroutesheetagent : Handles queries related to tunnel routesheets.
+        4. corrosionroutesheetagent : Handles queries related to corrosion routesheets.
+        5. leaksurveyroutesheetagent : Handles queries related to leak survey routesheets.
+        6. sliroutesheetagent : Handles queries related to SLI routesheets.
 
         Rules :
         - You do NOT answer domain-specific queries yourself. Instead, you interpret, decide, and route.
         - Maintain strict boundaries: only return general answers if the query is outside agent scope.
         - If the query is ambiguous, ask for clarification before routing.
-        - Never route to numberclarifier when category is already specified in user query. eg : "projects ending with 16" -- here user has specified "projects" so no need to route to numberclarifier.
-        - Never route to nameclarifier when role is already specified in user query. eg : "work orders supervised by Waqar" -- here user has specified "supervised" so no need to route to nameclarifier.
-
+        - Never route to numberclarifier when category is already specified in user query. eg : "tickets for contractor cac" -- here user has specified "projects" so no need to route to numberclarifier.
+        - Never route to nameclarifier when role is already specified in user query. eg : "tickets supervised by Waqar" -- here user has specified "supervised" so no need to route to nameclarifier.
+        - If user didn't specify the routesheet type then always ask to routesheet type before routing to agent. eg: "show me the routesheet for bronx" -- here user didn't specify the routesheet type so ask for it before routing to agent.
         Respond in the following format:
         - If general question: {{"answer": "<direct answer>"}}
         - If agent required: {{"agent": "<agent name>"}}
@@ -99,15 +108,16 @@ async def supervisor(query, database_name=None, auth_token=None, clarification_d
         - If name ambiguity (ONLY if no role prefix exists): {{"tool": "nameclarifier"}}
         
         Examples:
+        User: "Show me the tickets assigned to 34566"
+        Response: {{"tool": "numberclarifier"}}  -- 34566 is ambiguous without category prefix
+        User : "Are there any tickets in bronx assigned to majnu"  -- here majnu is name ambiguous without category prefix.
+        Response: {{"tool": "nameclarifier"}}  -- majnu is ambiguous without category prefix
         
-        User : show me the welds in QG21011633 
-        Response: {{"tool": "numberclarifier"}}  -- QG21011633 is ambiguous without category prefix
-        User: "Show me the work orders associated with G-23-901 "
-        Response: {{"tool": "numberclarifier"}}  -- G-23-901 is ambiguous without category prefix
-        User : "Are there any repaired welds in 101086750 ACCUWELD?"  -- here 101086750 ACCUWELD is number ambiguous without category prefix as number can be alphanumeric also.
-        Response: {{"tool": "numberclarifier"}}  -- 101086750 ACCUWELD is ambiguous without category prefix
+        User : show me tickets in bronx in CM route sheet.
+        Response: {{"agent": "contractorroutesheetagent"}}  -- clearly a contractor routesheet question, route to contractorroutesheetagent
+        User: "show me employees on leave in gas ops route"
+        Response: {{"agent": "gasoperationsroutesheetagent"}}  -- clearly a gas ops route sheet question, route to gasoperationsroutesheetagent
         
-       
         """
     )
 
@@ -190,14 +200,23 @@ async def supervisor(query, database_name=None, auth_token=None, clarification_d
         return {"answer": "Name clarifier is not yet implemented. Please specify the name type in your query."}
     
     # Route to appropriate agent based on parsed response
-    if parsed.get("agent") == "routesheetagent":
-        print("Routing to routesheetagent")
-        return await handle_routesheet(query, auth_token)
-    # elif parsed.get("agent") == "mtragent":
-    #     print("Routing to mtragent")
-    #     return handle_mtr_agent(query, auth_token)
-    # elif parsed.get("agent") == "specsagent":
-    #     print("Routing to specsagent")
-    #     return handle_specs_agent(query, auth_token)
+    if parsed.get("agent") == "gasoperationsroutesheetagent":
+        print("Routing to gasoperationsroutesheetagent")
+        return await handle_gasoperationsroutesheet(query, auth_token)
+    elif parsed.get("agent") == "contractorroutesheetagent":
+        print("Routing to contractorroutesheetagent")
+        return await handle_contractorroutesheet(query, auth_token)
+    elif parsed.get("agent") == "tunnelsroutesheetagent":
+        print("Routing to tunnelsroutesheetagent")
+        return await handle_tunnelsroutesheet(query, auth_token)
+    elif parsed.get("agent") == "corrosionroutesheetagent":
+        print("Routing to corrosionroutesheetagent")
+        return await handle_corrosionroutesheet(query, auth_token)
+    elif parsed.get("agent") == "leaksurveyroutesheetagent":
+        print("Routing to leaksurveyroutesheetagent")
+        return await handle_leaksurveyroutesheet(query, auth_token)
+    elif parsed.get("agent") == "sliroutesheetagent":
+        print("Routing to sliroutesheetagent")
+        return await handle_sliroutesheet(query, auth_token)
     
     return parsed

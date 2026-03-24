@@ -1,0 +1,260 @@
+
+User : show me the breakdown of tickets by work desc in gas ops routesheet
+SQL:
+SELECT
+  td.WorkDescription,
+  COUNT(td.TicketNumber) AS TicketCount
+FROM cedemo_RouteSheetHeader h
+JOIN cedemo_RouteSheetTicketDetails td ON h.RouteSheetID = td.RouteSheetID
+WHERE h.IsActive = 1
+  AND td.IsActive = 1
+  AND YEAR(h.RouteSheetDate) = 2026
+GROUP BY td.WorkDescription
+ORDER BY TicketCount DESC;
+
+
+User: Are there any OQ exceptions in gas ops bronx route on jan 16?
+SQL:
+-- here need to generate two queries for category capital and for categpry District as user didn't specify a category
+-- query1 for category Capital
+SELECT 
+   h.category,
+  t.TicketNumber,
+ t.WorkDescription,
+  t.WorkLocation,
+  rs.EmployeeName AS [OQ Exception Crew],
+  CASE WHEN h.Region = 'X' THEN 'Bronx' END AS Region,
+  CAST(h.RouteSheetDate AS DATE) AS RouteSheetDate,
+  COUNT(t.TicketNumber) OVER () AS Total_TicketCount
+FROM vm_cedemo_routesheetheader h
+JOIN cedemo_RouteSheetTicketDetails t 
+    ON h.RouteSheetID = t.RouteSheetID
+JOIN cedemo_RSAssignedEmployeeDetails rs 
+    ON t.RouteSheetTicketDetailsID = rs.RouteSheetTicketDetailsID
+WHERE h.IsActive = 1
+  AND t.IsActive = 1
+  AND rs.IsDeleted = 0
+  AND h.Region = 'X'
+  AND rs.Qualified = 'No'
+  AND h.category = 'Capital'
+  AND CAST(h.RouteSheetDate AS DATE) = '2026-01-16'
+ORDER BY rs.EmployeeName;
+-- Query2 for category District
+SELECT 
+  h.category,
+  t.TicketNumber,
+ t.WorkDescription,
+  t.WorkLocation,
+  rs.EmployeeName AS [OQ Exception Crew],
+  CASE WHEN h.Region = 'X' THEN 'Bronx' END AS Region,
+  CAST(h.RouteSheetDate AS DATE) AS RouteSheetDate,
+  COUNT(t.TicketNumber) OVER () AS Total_TicketCount
+FROM vm_cedemo_routesheetheader h
+JOIN cedemo_RouteSheetTicketDetails t 
+    ON h.RouteSheetID = t.RouteSheetID
+JOIN cedemo_RSAssignedEmployeeDetails rs 
+    ON t.RouteSheetTicketDetailsID = rs.RouteSheetTicketDetailsID
+WHERE h.IsActive = 1
+  AND t.IsActive = 1
+  AND rs.IsDeleted = 0
+  AND h.Region = 'X'
+  AND rs.Qualified = 'No'
+  AND h.category = 'District'
+  AND CAST(h.RouteSheetDate AS DATE) = '2026-01-16'
+ORDER BY rs.EmployeeName;
+
+User : Any OQ Exceptions in gas operations routesheet on jan 16 2026
+SQL:
+-- CAPITAL CATEGORY - DETAILS
+SELECT 
+    h.category,
+    t.TicketNumber,
+    t.WorkDescription,
+    t.WorkLocation,
+    rs.EmployeeName AS [OQ Exception Crew],
+    CASE 
+        WHEN h.Region = 'X' THEN 'Bronx'
+        WHEN h.Region = 'M' THEN 'Manhattan'
+        WHEN h.Region = 'Q' THEN 'Queens'
+        WHEN h.Region = 'W' THEN 'Westchester'
+        ELSE h.Region 
+    END AS Region,
+    CAST(h.RouteSheetDate AS DATE) AS RouteSheetDate,
+    COUNT(t.TicketNumber) OVER () AS Total_TicketCount
+FROM vm_cedemo_routesheetheader h
+JOIN cedemo_RouteSheetTicketDetails t 
+    ON h.RouteSheetID = t.RouteSheetID
+JOIN cedemo_RSAssignedEmployeeDetails rs 
+    ON t.RouteSheetTicketDetailsID = rs.RouteSheetTicketDetailsID
+WHERE 
+    h.IsActive = 1
+    AND t.IsActive = 1
+    AND rs.IsDeleted = 0
+    AND rs.Qualified = 'No'
+    AND h.category = 'Capital'
+    AND CAST(h.RouteSheetDate AS DATE) = '2026-01-16'
+ORDER BY rs.EmployeeName;
+-- DISTRICT CATEGORY - DETAILS
+SELECT 
+    h.category,
+    t.TicketNumber,
+    t.WorkDescription,
+    t.WorkLocation,
+    rs.EmployeeName AS [OQ Exception Crew],
+    CASE 
+        WHEN h.Region = 'X' THEN 'Bronx'
+        WHEN h.Region = 'M' THEN 'Manhattan'
+        WHEN h.Region = 'Q' THEN 'Queens'
+        WHEN h.Region = 'W' THEN 'Westchester'
+        ELSE h.Region 
+    END AS Region,
+    CAST(h.RouteSheetDate AS DATE) AS RouteSheetDate,
+    COUNT(t.TicketNumber) OVER () AS Total_TicketCount
+FROM vm_cedemo_routesheetheader h
+JOIN cedemo_RouteSheetTicketDetails t 
+    ON h.RouteSheetID = t.RouteSheetID
+JOIN cedemo_RSAssignedEmployeeDetails rs 
+    ON t.RouteSheetTicketDetailsID = rs.RouteSheetTicketDetailsID
+WHERE 
+    h.IsActive = 1
+    AND t.IsActive = 1
+    AND rs.IsDeleted = 0
+    AND rs.Qualified = 'No'
+    AND h.category = 'District'
+    AND CAST(h.RouteSheetDate AS DATE) = '2026-01-16'
+ORDER BY rs.EmployeeName;
+
+User : Are there any DISA Exceptions in gas ops routesheet on oct 1 2025?
+SQL:
+-- for Capital
+SELECT 
+    h.category,
+    t.TicketNumber,
+    t.WorkDescription,
+    t.WorkLocation,
+    rs.EmployeeName AS [DISA Exception Crew],
+    CASE 
+        WHEN h.Region = 'X' THEN 'Bronx'
+        WHEN h.Region = 'M' THEN 'Manhattan'
+        WHEN h.Region = 'Q' THEN 'Queens'
+        WHEN h.Region = 'W' THEN 'Westchester'
+        ELSE h.Region 
+    END AS Region,
+    CAST(h.RouteSheetDate AS DATE) AS RouteSheetDate,
+    COUNT(t.TicketNumber) OVER () AS Total_TicketCount
+FROM vm_cedemo_routesheetheader h
+JOIN cedemo_RouteSheetTicketDetails t 
+    ON h.RouteSheetID = t.RouteSheetID
+JOIN cedemo_RSAssignedEmployeeDetails rs 
+    ON t.RouteSheetTicketDetailsID = rs.RouteSheetTicketDetailsID
+WHERE 
+    h.IsActive = 1
+    AND t.IsActive = 1
+    AND rs.IsDeleted = 0
+    AND (rs.EmployeeDISAPool IS NULL OR rs.EmployeeDISAPool = '')
+    AND h.category = 'Capital'
+    AND CAST(h.RouteSheetDate AS DATE) = '2025-10-01'
+ORDER BY rs.EmployeeName;
+-- for District
+SELECT 
+    h.category,
+    t.TicketNumber,
+    t.WorkDescription,
+    t.WorkLocation,
+    rs.EmployeeName AS [DISA Exception Crew],
+    CASE 
+        WHEN h.Region = 'X' THEN 'Bronx'
+        WHEN h.Region = 'M' THEN 'Manhattan'
+        WHEN h.Region = 'Q' THEN 'Queens'
+        WHEN h.Region = 'W' THEN 'Westchester'
+        ELSE h.Region 
+    END AS Region,
+    CAST(h.RouteSheetDate AS DATE) AS RouteSheetDate,
+    COUNT(t.TicketNumber) OVER () AS Total_TicketCount
+FROM vm_cedemo_routesheetheader h
+JOIN cedemo_RouteSheetTicketDetails t 
+    ON h.RouteSheetID = t.RouteSheetID
+JOIN cedemo_RSAssignedEmployeeDetails rs 
+    ON t.RouteSheetTicketDetailsID = rs.RouteSheetTicketDetailsID
+WHERE 
+    h.IsActive = 1
+    AND t.IsActive = 1
+    AND rs.IsDeleted = 0
+    AND (rs.EmployeeDISAPool IS NULL OR rs.EmployeeDISAPool = '')
+    AND h.category = 'District'
+    AND CAST(h.RouteSheetDate AS DATE) = '2025-10-01'
+ORDER BY rs.EmployeeName;
+
+User : Are there any employees on leave on feb 3 in gas ops route ?
+SQL:
+-- CAPITAL CATEGORY
+SELECT h.category, l.EmployeeName, l.ITSID, l.ReasonForAbsence,l.Comments,
+CASE WHEN h.Region='X' THEN 'Bronx' WHEN h.Region='M' THEN 'Manhattan' WHEN h.Region='Q' THEN 'Queens' WHEN h.Region='W' THEN 'Westchester' ELSE h.Region END AS Region,
+CAST(h.RouteSheetDate AS DATE) AS RouteSheetDate
+FROM vm_cedemo_routesheetheader h
+JOIN cedemo_RSLeaveEmployeeDetails l ON h.RouteSheetID = l.RouteSheetID
+WHERE h.IsActive = 1 AND l.IsDeleted = 0 AND h.category = 'Capital' AND CAST(h.RouteSheetDate AS DATE) = '2026-02-03'
+ORDER BY l.EmployeeName;
+-- count of employees
+SELECT COUNT(l.EmployeeName) AS LeaveEmployeeCount_Capital
+FROM vm_cedemo_routesheetheader h
+JOIN cedemo_RSLeaveEmployeeDetails l ON h.RouteSheetID = l.RouteSheetID
+WHERE h.IsActive = 1 AND l.IsDeleted = 0 AND h.category = 'Capital' AND CAST(h.RouteSheetDate AS DATE) = '2026-02-03';
+-- DISTRICT CATEGORY
+SELECT h.category, l.EmployeeName, l.ITSID, l.ReasonForAbsence,l.Comments,
+CASE WHEN h.Region='X' THEN 'Bronx' WHEN h.Region='M' THEN 'Manhattan' WHEN h.Region='Q' THEN 'Queens' WHEN h.Region='W' THEN 'Westchester' ELSE h.Region END AS Region,
+CAST(h.RouteSheetDate AS DATE) AS RouteSheetDate
+FROM vm_cedemo_routesheetheader h
+JOIN cedemo_RSLeaveEmployeeDetails l ON h.RouteSheetID = l.RouteSheetID
+WHERE h.IsActive = 1 AND l.IsDeleted = 0 AND h.category = 'District' AND CAST(h.RouteSheetDate AS DATE) = '2026-02-03'
+ORDER BY l.EmployeeName;
+-- count of employees
+SELECT COUNT(l.EmployeeName) AS LeaveEmployeeCount_District
+FROM vm_cedemo_routesheetheader h
+JOIN cedemo_RSLeaveEmployeeDetails l ON h.RouteSheetID = l.RouteSheetID
+WHERE h.IsActive = 1 AND l.IsDeleted = 0 AND h.category = 'District' AND CAST(h.RouteSheetDate AS DATE) = '2026-02-03';
+
+User : Show me details of the district construction tickets by borough in gas ops route
+SQL:
+SELECT h.category, t.TicketNumber, t.WorkDescription, t.WorkLocation,
+ CASE WHEN h.Region = 'X' THEN 'Bronx' WHEN h.Region = 'M' THEN 'Manhattan' WHEN h.Region = 'Q' THEN 'Queens' WHEN h.Region = 'W' THEN 'Westchester' ELSE h.Region END AS Region, 
+ CAST(h.RouteSheetDate AS DATE) AS RouteSheetDate FROM vm_cedemo_routesheetheader h 
+ JOIN cedemo_RouteSheetTicketDetails t ON h.RouteSheetID = t.RouteSheetID 
+ WHERE h.IsActive = 1 AND t.IsActive = 1 AND h.category = 'District' AND CAST(h.RouteSheetDate AS DATE) = '2026-02-03'
+  ORDER BY Region, t.TicketNumber; 
+-- count query to get the total count of tickets
+SELECT 
+    COUNT(t.TicketNumber) AS Total_TicketCount
+FROM vm_cedemo_routesheetheader h
+JOIN cedemo_RouteSheetTicketDetails t 
+    ON h.RouteSheetID = t.RouteSheetID
+WHERE 
+    h.IsActive = 1
+    AND t.IsActive = 1
+    AND h.category = 'District'
+    AND CAST(h.RouteSheetDate AS DATE) = '2026-02-03';
+
+User : For the last 30 days, show me a breakdown of tickets in the bronx as a function of job description
+SQL:
+SELECT td.WorkDescription, COUNT(td.TicketNumber) AS TicketCount
+FROM vm_cedemo_routesheetheader h
+JOIN cedemo_RouteSheetTicketDetails td ON h.RouteSheetID = td.RouteSheetID
+WHERE h.IsActive = 1
+  AND td.IsActive = 1
+  AND h.Region = 'X'
+  AND CAST(h.RouteSheetDate AS DATE) >= DATEADD(DAY,-30,'2026-03-23')
+GROUP BY td.WorkDescription
+ORDER BY TicketCount DESC;
+
+User: Show me a breakdown of the DISA Exception tickets by borough on oct 1 2025 in gas ops route
+SQL:
+-- for Capital category
+SELECT CASE WHEN h.Region = 'X' THEN 'Bronx' WHEN h.Region = 'M' THEN 'Manhattan' WHEN h.Region = 'Q' THEN 'Queens' WHEN h.Region = 'W' THEN 'Westchester' ELSE h.Region END AS Region, 
+COUNT(t.TicketNumber) AS TicketCount FROM vm_cedemo_routesheetheader h JOIN cedemo_RouteSheetTicketDetails t ON h.RouteSheetID = t.RouteSheetID 
+JOIN cedemo_RSAssignedEmployeeDetails rs ON t.RouteSheetTicketDetailsID = rs.RouteSheetTicketDetailsID WHERE h.IsActive = 1 AND t.IsActive = 1 AND rs.IsDeleted = 0 AND
+ (rs.EmployeeDISAPool IS NULL OR rs.EmployeeDISAPool = '') AND h.category = 'Capital' AND CAST(h.RouteSheetDate AS DATE) = '2025-10-01' GROUP BY h.Region ORDER BY TicketCount DESC;
+-- for District category
+SELECT CASE WHEN h.Region = 'X' THEN 'Bronx' WHEN h.Region = 'M' THEN 'Manhattan' WHEN h.Region = 'Q' THEN 'Queens' WHEN h.Region = 'W' THEN 'Westchester' ELSE h.Region END AS Region, 
+COUNT(t.TicketNumber) AS TicketCount FROM vm_cedemo_routesheetheader h JOIN cedemo_RouteSheetTicketDetails t ON h.RouteSheetID = t.RouteSheetID 
+JOIN cedemo_RSAssignedEmployeeDetails rs ON t.RouteSheetTicketDetailsID = rs.RouteSheetTicketDetailsID WHERE h.IsActive = 1 AND t.IsActive = 1 AND rs.IsDeleted = 0 AND
+ (rs.EmployeeDISAPool IS NULL OR rs.EmployeeDISAPool = '') AND h.category = 'District' AND CAST(h.RouteSheetDate AS DATE) = '2025-10-01' GROUP BY h.Region ORDER BY TicketCount DESC;

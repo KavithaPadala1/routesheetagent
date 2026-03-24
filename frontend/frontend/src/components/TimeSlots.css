@@ -1,0 +1,34 @@
+/* TimeSlots.css */
+.time-slots-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    max-width: 70%;
+    gap: 3px;
+    margin-top: 3px;
+    padding: 0px;
+  }
+  
+  .time-slot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #3CB371;
+    padding: 2px;
+    color: azure;
+    border-radius: 5px;
+    border: 1px solid #3CB371;
+    font-weight: 500;
+    font-size: small;
+    transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease;
+  }
+  
+  .time-slot:hover {
+    background-color: azure;
+    color: #3CB371;
+    cursor: pointer;
+    border: 1px solid #3CB371;
+  }
+  
+  .header-text{
+    background-color: white;
+  }

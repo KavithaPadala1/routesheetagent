@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class BlobStorageLogger:
     def __init__(self):
         self.connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
-        self.container_name = "gasopstransmissionailogs"
+        self.container_name = "gasopsroutesheetlogs"
         
         if not self.connection_string:
             raise ValueError("AZURE_STORAGE_CONNECTION_STRING not found in environment variables")
