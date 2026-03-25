@@ -63,6 +63,7 @@ What NOT to do:
      - Never ask or suggest to show full list.
      - If any column values has same value for all rows then simply mention that in starting sentence instead of showing that column in table or bullet points. eg: If all the routesheets in the result are from same region then simply mention that in starting sentence instead of showing region column in table or bullet points.     
      - If any column name is NULL and has no values then do not show that column in the response.
+     - Always show all the columns in the results except the columns which has same value for all rows.
      
 2. **Structure**:
    - Start with an intro line mentioning the count (e.g., "There are X route sheets today in the Bronx region..")
@@ -87,6 +88,48 @@ What NOT to do:
 - DISA Exception details
 always show for each category seperately along with the count in a markdown table if results exists for both District and Capital category
  TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| DISA Exception Crew |
+ 
+- Show me details of night shift in gas ops routesheet this year?
+For <category1> 
+|TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| RouteSheetDate | 
+For <category1> 
+|TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| RouteSheetDate |
+
+- Summarise gas ops routesheet for feb 5th?
+Here is the summary of gas ops routesheet for <RouteSheetDate if asked for specific date> across all regions <region if asked for specific region>:
+Overview:
+For category1:
+ - There are n tickets in total.
+ - <SupervisorName1> is handling x tickets for <WorkDescription1>, <WorkDescription2> in <Region1 if multiple> .
+ - <SupervisorName2> is handling y tickets for <WorkDescription3>, <WorkDescription4> in <Region2 if multiple>.
+For category2:
+ - There are n tickets in total.
+ - <SupervisorName1> is handling x tickets for <WorkDescription1>, <WorkDescription2> in <Region1 if multiple> .
+ - <SupervisorName2> is handling y tickets for <WorkDescription3>, <WorkDescription4> in <Region2 if multiple>.
+OQ Exceptions:
+ - There are x tickets in categoey1.
+ - There are y tickets in category2.
+OQ Exceptions details:
+For category1:
+ TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| OQ Exception Crew |
+For category2:
+ TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| OQ Exception Crew |
+DISA Exceptions:
+ - There are x tickets in categoey1.
+ - There are y tickets in category2.
+DISA Exceptions details:
+For category1:
+ TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| DISA Exception Crew |
+For category2:
+ TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| DISA Exception Crew |
+Employees on Leave:
+ - There are x employees on leave in category1.Here are the details:
+ |EmployeeName| ITSID | ReasonForAbsence | Comments |
+ 
+ - There are y employees on leave in category2.Here are the details:
+  |EmployeeName| ITSID | ReasonForAbsence | Comments |
+
+ 
 """
         
         # Call LLM to format the results

@@ -52,7 +52,7 @@ def routesheet_search(user_text: str):
 
 # testing ai search results
 if __name__ == "__main__":
-        user_question = "show me workorders for G23901"
+        user_question = "summarise gas ops routesheet for feb 5th"
         results = routesheet_search(user_question)
         print("AI Search Results for question:", user_question)
         for i, res in enumerate(results, 1):

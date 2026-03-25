@@ -115,8 +115,11 @@ SELECT
     ELSE Region
   END AS Region
 
+**IMPORTANT : If you generate query for only one category when user didn't specify any category then you will be missing out important information for the user as user is interested to see seperate queries for each category (Disrict and Capital) if specific category is not mentioned in user query. So always generate seperate queries for District and Capital category when user query doesn't mention any specific category.**
 
 ## Gas Operations Route Sheets (gas ops route sheet)
+    # For any details questions always show TicketNumber,WorkDescription,WorkLocation,Region (if multiple), Category and other relevant columns based on user question.And always include count query for category District and Capital to know Ticket count for each category.
+    
     a) vm_cedemo_routesheetheader : 
               - Use this table for overall route sheet information (e.g., date, region, Shift, Category).
               - Always generate a count query based on the same filters as the main query to provide context in the response.
@@ -127,15 +130,18 @@ SELECT
     b) cedemo_RouteSheetTicketDetails :
                 - Use this table for ticket-level details (e.g., TicketNumber, Worklocation,WorkDescription etc).
                 - Always generate a count query based on the same filters as the main query to provide context in the response.
+                - For ticket details always show SupervisorName,TicketNumber, WorkDescription,WorkLocation,Region,RouteSheetDate,Category in the output query.
                 ex: show me the tickets in gas ops routesheet with work location in bronx → use this table to filter by work location.
    
     c) cedemo_RSAssignedEmployeeDetails :
         - Use this table for details about assigned employees (e.g., EmployeeName, ITSID, JobTitle ,Qualified ,MissingCoveredTasks ,OQExceptions, DISA Exceptions etc).
         - OQException means rs.Qualified = 'No'. DISA Exception means rs.EmployeeDISAPool IS NULL OR rs.EmployeeDISAPool = ''.
+        - When showing assigned employees, always show EmployeeName,ITSID,TicketNumber,WorkDescription,Qualified,EmployeeDISAPool in the output query. And add Region, RouteSheetDate, Category etc based on user question.
         
     d) cedemo_RSLeaveEmployeeDetails :
                 - Use this table for details about employees on leave (e.g., EmployeeName, ITSID, ReasonForAbsence, Comments etc).
                 - Always generate a count query based on the same filters as the main query to provide context in the response.
+                - When showing employees on leave, always show EmployeeName,ITSID,ReasonForAbsence,Comments in the output query. And add Region, RouteSheetDate, Category,WorkDescription etc based on user question.
                 ex: show me the employees on leave in gas ops routesheet in manhattan → use this table to filter by region and employee status.  
     
     # OQ Exceptions queries:
@@ -150,11 +156,12 @@ SELECT
               Only employees who are not qualified (rs.Qualified = 'No')
               Only the specified region (h.Region = '<Region Code>')
               Only the specified date (CAST(h.RouteSheetDate AS DATE) = '<Date>')
-          5.Handle multiple categories: For each category (like District and Capital), create a separate query with h.category = '<Category>'.
+          5.**Handle multiple categories: For each category (like District and Capital), create a separate query with h.category = '<Category>'.**
           6.Select the columns you want:
               h.category,t.TicketNumber,t.WorkDescription,t.WorkLocation, rs.EmployeeName AS [OQ Exception Crew], Region (use CASE WHEN h.Region = 'X' THEN 'Bronx' END),CAST(h.RouteSheetDate AS DATE) AS RouteSheetDate,Count of tickets using COUNT(t.TicketNumber) OVER () AS Total_TicketCount
           7.Order the results by rs.EmployeeName so the report is organized by crew.
           8.Output one query per category using the steps above.
+    
     # For DISA Exceptions queries:
       - Use vm_cedemo_routesheetheader, cedemo_RouteSheetTicketDetails and cedemo_RSAssignedEmployeeDetails tables.
           1. Start with the RouteSheet header table (vm_cedemo_routesheetheader). This table has the RouteSheet info like date, category, and region.
@@ -167,12 +174,26 @@ SELECT
               Only employees who are DISA Exceptions (rs.EmployeeDISAPool IS NULL OR rs.EmployeeDISAPool = '')
               Only the specified region (h.Region = '<Region Code>')
               Only the specified date (CAST(h.RouteSheetDate AS DATE) = '<Date>')
-          5.Handle multiple categories: For each category (like District and Capital), create a separate query with h.category = '<Category>'.
+          5.**Handle multiple categories: For each category (like District and Capital), create a separate query with h.category = '<Category>'.**
           6.Select the columns you want:
               h.category,t.TicketNumber,t.WorkDescription,t.WorkLocation, rs.EmployeeName AS [DISA Exception Crew], Region (use CASE WHEN h.Region = 'X' THEN 'Bronx' END),CAST(h.RouteSheetDate AS DATE) AS RouteSheetDate,Count of tickets using COUNT(t.TicketNumber) OVER () AS Total_TicketCount
           7.Order the results by rs.EmployeeName so the report is organized by crew.
           8.Output one query per category using the steps above.
-
+    
+    # Summary or tell me about gas operations routesheet queries:
+        - Always include these below sections along with their respective count queries to provide comprehensive insights to the user for both District and Capital category:
+           1.Overview:
+              For each category, show a summary by supervisor, including supervisor name, count of distinct work descriptions, list of work descriptions, count of distinct tickets, list of ticket numbers, and region.
+            2.OQ Exceptions:
+                For each category, show the count of OQ exception tickets (where Qualified = 'No').
+                Show ticket-level details: ticket number, region, work location, work description, and crew (employee names).
+            3.DISExceptions:
+                For each category, show the count of DISA exception tickets (where EmployeeDISAPool IS NULL OR EmployeeDISAPool = '').
+                Show ticket-level details: ticket number, region, work location, work description, and crew (employee names).
+            4.Employees on Leave:
+                For each category, show the count of employees on leave.
+                Show details: employee name, ITSID, reason for absence, comments, region, and route sheet date.
+    (refer to the provided example)
     
 """
    
