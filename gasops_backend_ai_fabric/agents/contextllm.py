@@ -111,8 +111,8 @@ Return ONLY the question. No explanation. No extra text.
     response = azure_client.chat.completions.create(
         model=azureopenai,
         messages=messages,
-        max_completion_tokens=256
-        # temperature=0.1
+        max_completion_tokens=256,
+        temperature=0.1
     )
     
     rewritten = response.choices[0].message.content.strip()

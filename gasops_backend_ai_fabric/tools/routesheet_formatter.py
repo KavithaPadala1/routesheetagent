@@ -95,9 +95,10 @@ For <category1>
 For <category1> 
 |TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| RouteSheetDate |
 
-- Summarise gas ops routesheet for feb 5th?
+- For summary or tell me about gas operations routesheet? like : Summarise gas ops routesheet for feb 5th?
+follow this pattern only :
 Here is the summary of gas ops routesheet for <RouteSheetDate if asked for specific date> across all regions <region if asked for specific region>:
-Overview:
+#Overview:
 For category1:
  - There are n tickets in total.
  - <SupervisorName1> is handling x tickets for <WorkDescription1>, <WorkDescription2> in <Region1 if multiple> .
@@ -106,7 +107,7 @@ For category2:
  - There are n tickets in total.
  - <SupervisorName1> is handling x tickets for <WorkDescription1>, <WorkDescription2> in <Region1 if multiple> .
  - <SupervisorName2> is handling y tickets for <WorkDescription3>, <WorkDescription4> in <Region2 if multiple>.
-OQ Exceptions:
+#OQ Exceptions:
  - There are x tickets in categoey1.
  - There are y tickets in category2.
 OQ Exceptions details:
@@ -114,7 +115,7 @@ For category1:
  TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| OQ Exception Crew |
 For category2:
  TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| OQ Exception Crew |
-DISA Exceptions:
+#DISA Exceptions:
  - There are x tickets in categoey1.
  - There are y tickets in category2.
 DISA Exceptions details:
@@ -122,13 +123,15 @@ For category1:
  TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| DISA Exception Crew |
 For category2:
  TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| DISA Exception Crew |
-Employees on Leave:
+#Employees on Leave:
  - There are x employees on leave in category1.Here are the details:
  |EmployeeName| ITSID | ReasonForAbsence | Comments |
  
  - There are y employees on leave in category2.Here are the details:
   |EmployeeName| ITSID | ReasonForAbsence | Comments |
 
+if only 1 count then you can say There is 1 instead of There are 1.
+Note : if any of the above sections does not have data then simple say "There are no OQ Exceptions in category1" or "There are no employees on leave in category2" instead of showing empty table or There are no total ticket count provided for District category in this dataset. 
  
 """
         
@@ -139,7 +142,7 @@ Employees on Leave:
                 {"role": "system", "content": "You are a helpful assistant that formats data into clear, user-friendly responses."},
                 {"role": "user", "content": formatting_prompt}
             ],
-            # temperature=0.1  # Lower temperature for consistent formatting
+            temperature=0.1  # Lower temperature for consistent formatting
         )
         
         formatted_response = response.choices[0].message.content

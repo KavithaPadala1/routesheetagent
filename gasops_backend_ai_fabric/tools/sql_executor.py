@@ -347,7 +347,7 @@ Corrected SQL:"""
                 {"role": "system", "content": "You are a SQL syntax correction expert for Microsoft SQL Server. Return only corrected SQL without any formatting or explanations."},
                 {"role": "user", "content": correction_prompt}
             ],
-            # temperature=0,  # Deterministic corrections
+            temperature=0.1,  # Deterministic corrections
             max_completion_tokens=2000
         )
         

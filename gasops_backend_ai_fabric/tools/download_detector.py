@@ -77,7 +77,7 @@ def detect_download_request(user_query: str) -> dict:
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_query}
             ],
-            # temperature=0.1,
+            temperature=0.1,
             max_completion_tokens=200,
             response_format={"type": "json_object"}
         )

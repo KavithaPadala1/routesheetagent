@@ -658,3 +658,50 @@ WHERE h.IsActive = 1
   AND h.category = 'District'
   AND CAST(h.RouteSheetDate AS DATE) = '2026-02-05';
 
+
+User: show me tickets which require peer fusing in gas ops on feb 5 2026
+SQL:
+-- query for checking fusing peer in category District
+SELECT 
+    t.TicketNumber,
+    t.WorkDescription,
+    t.WorkLocation,
+    CASE
+        WHEN h.Region = 'X' THEN 'Bronx'
+        WHEN h.Region = 'M' THEN 'Manhattan'
+        WHEN h.Region = 'Q' THEN 'Queens'
+        WHEN h.Region = 'W' THEN 'Westchester'
+        ELSE h.Region
+    END AS Region,
+    CAST(h.RouteSheetDate AS DATE) AS RouteSheetDate,
+    h.category, t.FusingPeerNeedCount
+FROM vm_cedemo_routesheetheader h
+JOIN cedemo_RouteSheetTicketDetails t ON h.RouteSheetID = t.RouteSheetID
+WHERE h.IsActive = 1
+  AND t.IsActive = 1
+  AND h.category = 'District'
+  AND CAST(h.RouteSheetDate AS DATE) = '2026-02-05'
+   AND t.FusingReq = 'Yes'
+ORDER BY t.TicketNumber;;
+-- query for checking fusing peer in category Capital
+SELECT
+    t.TicketNumber,
+    t.WorkDescription,
+    t.WorkLocation,
+    CASE
+        WHEN h.Region = 'X' THEN 'Bronx'
+        WHEN h.Region = 'M' THEN 'Manhattan'
+        WHEN h.Region = 'Q' THEN 'Queens'
+        WHEN h.Region = 'W' THEN 'Westchester'
+        ELSE h.Region
+    END AS Region,
+    CAST(h.RouteSheetDate AS DATE) AS RouteSheetDate,
+    h.category,FusingPeerNeedCount
+FROM vm_cedemo_routesheetheader h
+JOIN cedemo_RouteSheetTicketDetails t ON h.RouteSheetID = t.RouteSheetID
+WHERE h.IsActive = 1
+  AND t.IsActive = 1
+  AND h.category = 'Capital'
+  AND CAST(h.RouteSheetDate AS DATE) = '2026-02-05'
+  AND t.FusingReq = 'Yes'
+ORDER BY t.TicketNumber;;

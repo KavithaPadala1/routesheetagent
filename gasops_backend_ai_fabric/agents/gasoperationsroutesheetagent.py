@@ -78,6 +78,7 @@ async def handle_gasoperationsroutesheet(query: str, auth_token: str = None):
         response = azure_client.chat.completions.create(
             model=azureopenai,
             messages=messages,
+            temperature=0.1, 
             tools=tools,
             tool_choice="required"
         )
@@ -98,6 +99,27 @@ async def handle_gasoperationsroutesheet(query: str, auth_token: str = None):
             
             if function_name == "execute_sql_query":
                 sql_query = function_args.get("sql_query")
+                print("[LLM SQL QUERY RAW]", sql_query)  # Add this to see what LLM actually generated
+
+                # ADD THIS PARSING CODE HERE (right after sql_query = ...)
+                if "PLANNING:" in sql_query or "--DISTRICT_MAIN" in sql_query or "--CAPITAL_MAIN" in sql_query:
+                    print("[routesheetagent] Parsing SQL from slot format in tool call...")
+                    import re
+                    # Regex for -- markers (updated for new prompt format)
+                    slot_pattern = r'--(\w+_MAIN|--\w+_COUNT)\s*(.*?)\s*(?=\n--|$)'
+                    matches = re.findall(slot_pattern, sql_query, re.DOTALL)
+                    sql_parts = []
+                    for match in matches:
+                        slot_name, sql = match
+                        cleaned_sql = sql.strip()
+                        if cleaned_sql and (cleaned_sql.startswith("SELECT") or cleaned_sql.startswith("WITH")):
+                            sql_parts.append(cleaned_sql)
+                    if sql_parts:
+                        sql_query = ";\n".join(sql_parts) + ";"
+                        print(f"[routesheetagent] Extracted SQL: {sql_query[:200]}...")
+                    else:
+                        print("[routesheetagent] No valid SQL found in slots.")
+                        return {"answer": "I couldn't generate valid SQL for your query. Please rephrase."}
                 
                 # Execute the SQL query
                 try:

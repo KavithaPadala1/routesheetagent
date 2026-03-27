@@ -81,7 +81,7 @@ async def number_clarifier_llm(query: str, auth_token=None):
             {"role": "system", "content": "You are a SQL query generator that identifies number categories with fuzzy matching. Return only valid JSON without markdown formatting."},
             {"role": "user", "content": prompt}
         ],
-        # temperature=0
+        temperature=0
     )
     
     result = response.choices[0].message.content.strip()
@@ -246,7 +246,7 @@ async def handle_clarification_result(original_query: str, user_number: str, mat
             {"role": "system", "content": "You are a query analyzer that determines user intent and responds appropriately. Return only valid JSON."},
             {"role": "user", "content": prompt}
         ],
-        # temperature=0
+        temperature=0
     )
     
     result = response.choices[0].message.content.strip()

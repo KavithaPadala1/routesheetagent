@@ -38,7 +38,7 @@ Columns:
 - Muni (varchar): Municipality associated with the ticket.
 - Markout (varchar): Indicates whether a markout is required.
 - Flagger (varchar): Indicates whether a flagger is required.
-- FusingReq (varchar): Indicates whether fusing is required.
+- FusingReq (varchar): Indicates whether fusing is required.It has values 'Yes', 'No'
 - IsActive (bit): Indicates whether the ticket details record is active.
 - EmergencyPermit (varchar): Indicates whether an emergency permit is associated with the ticket.
 - FlaggerQuantity (varchar): Number of flaggers required for the work.
