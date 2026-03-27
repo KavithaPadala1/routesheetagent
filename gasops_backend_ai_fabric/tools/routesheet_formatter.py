@@ -84,16 +84,21 @@ What NOT to do:
  - Are there any OQ Exceptions in gas ops bronx route?
  <if results exists for both District and Capital category always show the details in serperate section along with the count in a markdown table>
  TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| OQ Exception Crew |
+<show all rows in the result>
 
 - DISA Exception details
 always show for each category seperately along with the count in a markdown table if results exists for both District and Capital category
  TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| DISA Exception Crew |
- 
+ <show all rows in the result>
+
 - Show me details of night shift in gas ops routesheet this year?
 For <category1> 
 |TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| RouteSheetDate | 
+<show all rows in the result>
+
 For <category1> 
 |TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| RouteSheetDate |
+<show all rows in the result>
 
 - For summary or tell me about gas operations routesheet? like : Summarise gas ops routesheet for feb 5th?
 follow this pattern only :
@@ -108,27 +113,35 @@ For category2:
  - <SupervisorName1> is handling x tickets for <WorkDescription1>, <WorkDescription2> in <Region1 if multiple> .
  - <SupervisorName2> is handling y tickets for <WorkDescription3>, <WorkDescription4> in <Region2 if multiple>.
 #OQ Exceptions:
- - There are x tickets in categoey1.
+ - There are x tickets in category1.
  - There are y tickets in category2.
 OQ Exceptions details:
 For category1:
  TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| OQ Exception Crew |
+ **<show all rows in the result even it if is 25 rows>**
 For category2:
  TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| OQ Exception Crew |
+ <show all rows in the result>
+
 #DISA Exceptions:
  - There are x tickets in categoey1.
  - There are y tickets in category2.
 DISA Exceptions details:
 For category1:
  TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| DISA Exception Crew |
+ <show all rows in the result>
 For category2:
  TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| DISA Exception Crew |
+ <show all rows in the result>
+
 #Employees on Leave:
  - There are x employees on leave in category1.Here are the details:
  |EmployeeName| ITSID | ReasonForAbsence | Comments |
+ <show all rows in the result>
  
  - There are y employees on leave in category2.Here are the details:
   |EmployeeName| ITSID | ReasonForAbsence | Comments |
+  <show all rows in the result>
 
 if only 1 count then you can say There is 1 instead of There are 1.
 Note : if any of the above sections does not have data then simple say "There are no OQ Exceptions in category1" or "There are no employees on leave in category2" instead of showing empty table or There are no total ticket count provided for District category in this dataset. 
