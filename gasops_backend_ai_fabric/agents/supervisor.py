@@ -11,11 +11,12 @@ import os
 # Import agent handlers
 from agents.gasoperationsroutesheetagent import handle_gasoperationsroutesheet
 from agents.contractorroutesheetagent import handle_contractorroutesheet
-# from agents.tunnelsroutesheetagent import handle_tunnelsroutesheet_agent
-# from agents.secondinspectorroutesheetagent import handle_second_inspectorroutesheet_agent
-# from agents.corrosionroutesheetagent import handle_corrosionroutesheet_agent
-# from agents.leaksurveyroutesheetagent import handle_leaksurveyroutesheet_agent
-# from agents.sliroutesheetagent import handle_sliroutesheet_agent
+from agents.tunnelsroutesheetagent import handle_tunnelsroutesheet
+from agents.corrosionroutesheetagent import handle_corrosionroutesheet
+from agents.leaksurveyroutesheetagent import handle_leaksurveyroutesheet
+from agents.sliroutesheetagent import handle_sliroutesheet
+from agents.gdsroutesheet import handle_gdsroutesheet
+
 from tools.numberclarifier import number_clarifier_llm
 from tools.nameclarifier import name_clarifier_llm
 
@@ -82,7 +83,7 @@ async def supervisor(query, database_name=None, auth_token=None, clarification_d
             Example ambiguous: "give me the tickets assigned to manju" -- name manju needs clarification
             Example clear: "give me the tickets assigned to employee manju" -- already clarified, route to agent
             Example clear: "give me the tickets handled by secondinspector Waqar" -- already clarified as supervised means SupervisorName, route to agent.
-            Example ambiguous : Give me the tickets assigned to Shaw Pipeline Services
+            Example ambiguous : Show me a breakdown of inspector assigned to reconn in the bronx on feb 6 2026 in contractor routesheet -- here reconn is ambiguous, so route to nameclarifier.
         - These tools will return either the actual category of the number/name OR a direct answer for verification questions.
         
         Available agents and their domains:
@@ -90,8 +91,9 @@ async def supervisor(query, database_name=None, auth_token=None, clarification_d
         2. contractorroutesheetagent : Handles queries related to CM or contractor routesheets.
         3. tunnelsroutesheetagent : Handles queries related to tunnel routesheets.
         4. corrosionroutesheetagent : Handles queries related to corrosion routesheets.
-        5. leaksurveyroutesheetagent : Handles queries related to leak survey routesheets.
-        6. sliroutesheetagent : Handles queries related to SLI routesheets.
+        5. leaksurveyroutesheetagent : Handles queries related to leak survey routesheets for company and contractor.
+        6. sliroutesheetagent : Handles queries related to SLI routesheets for company sli, contractor sli and contractor MLR sli.
+        7. GDS/ERFroutesheetagent : Handles queries related to GDS/ERF steady , rotating routesheets.
 
         Rules :
         - You do NOT answer domain-specific queries yourself. Instead, you interpret, decide, and route.
@@ -100,6 +102,7 @@ async def supervisor(query, database_name=None, auth_token=None, clarification_d
         - Never route to numberclarifier when category is already specified in user query. eg : "tickets for contractor cac" -- here user has specified "projects" so no need to route to numberclarifier.
         - Never route to nameclarifier when role is already specified in user query. eg : "tickets supervised by Waqar" -- here user has specified "supervised" so no need to route to nameclarifier.
         - If user didn't specify the routesheet type then always ask to routesheet type before routing to agent. eg: "show me the routesheet for bronx" -- here user didn't specify the routesheet type so ask for it before routing to agent.
+        
         Respond in the following format:
         - If general question: {{"answer": "<direct answer>"}}
         - If agent required: {{"agent": "<agent name>"}}
@@ -110,8 +113,15 @@ async def supervisor(query, database_name=None, auth_token=None, clarification_d
         Examples:
         User: "Show me the tickets assigned to 34566"
         Response: {{"tool": "numberclarifier"}}  -- 34566 is ambiguous without category prefix
+        
         User : "Are there any tickets in bronx assigned to majnu"  -- here majnu is name ambiguous without category prefix.
         Response: {{"tool": "nameclarifier"}}  -- majnu is ambiguous without category prefix
+        User :  show me tickets by work type of bond in bronx in contractor routesheet
+        Response: {{"tool": "nameclarifier"}}  -- here bond is ambiguous so route to nameclarifier.
+        user : "Show me a breakdown of inspector assigned to CAC in the bronx on jan 12 2026 in contractor routesheet"
+        Response: {{"tool": "nameclarifier"}}  -- here CAC is ambiguous so route to nameclarifier.
+        User : "show me shift details for barnet robin in leaksurvey routesheet"
+        Response: {{"tool": "nameclarifier"}}  -- here barnet robin is ambiguous so route to nameclarifier.
         
         User : show me tickets in bronx in CM route sheet.
         Response: {{"agent": "contractorroutesheetagent"}}  -- clearly a contractor routesheet question, route to contractorroutesheetagent
@@ -218,5 +228,8 @@ async def supervisor(query, database_name=None, auth_token=None, clarification_d
     elif parsed.get("agent") == "sliroutesheetagent":
         print("Routing to sliroutesheetagent")
         return await handle_sliroutesheet(query, auth_token)
+    elif parsed.get("agent") == "GDS/ERFroutesheetagent":
+        print("Routing to GDS/ERF routesheet agent")
+        return await handle_gdsroutesheet(query, auth_token)
     
     return parsed

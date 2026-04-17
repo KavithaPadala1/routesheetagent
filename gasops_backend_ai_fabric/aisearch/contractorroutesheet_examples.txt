@@ -1,0 +1,493 @@
+
+User : show me tickets by work type of contractor bond in bronx in contractor routesheet on 2024 july 11
+SQL:
+SELECT DISTINCT
+    TicketNumber,
+    WorkType,
+    CASE
+        WHEN Region = 'X' THEN 'Bronx'
+        ELSE Region
+    END AS Region,
+    RouteSheetDate,
+    ContractorName, WorkLocation
+FROM cedemo_ContractorRouteSheetTicketDetails t
+JOIN CEDEMO_ContractorMaster c ON t.VendorCode = c.VenderCode
+WHERE c.ContractorName = 'Bond Civil & Utility Construction Inc.'
+  AND c.IsActive = 1
+  AND t.IsActive = 1
+  AND WorkType IS NOT NULL
+  AND Region = 'X' 
+  AND CAST(RouteSheetDate AS DATE) = '2024-07-11'
+ORDER BY WorkType DESC;
+-- count query to know total tickets
+SELECT
+    COUNT(t.TicketNumber) AS TicketCount
+FROM cedemo_ContractorRouteSheetTicketDetails t
+JOIN CEDEMO_ContractorMaster c ON t.VendorCode = c.VenderCode
+WHERE c.ContractorName = 'Bond Civil & Utility Construction Inc.'
+  AND c.IsActive = 1
+  AND t.IsActive = 1
+  AND WorkType IS NOT NULL
+  AND Region = 'X' 
+  AND CAST(RouteSheetDate AS DATE) = '2024-07-11';
+
+User : show me breakdown of tickets that require fusing peer in contractor routesheet on 2024-04-26
+SQL:
+-- main query to get the ticket details
+SELECT
+    TicketNumber,
+    WorkDescription,
+    WorkType,
+    CASE
+        WHEN Region = 'X' THEN 'Bronx'
+        WHEN Region = 'M' THEN 'Manhattan'
+        WHEN Region = 'Q' THEN 'Queens'
+        WHEN Region = 'W' THEN 'Westchester'
+        ELSE Region
+    END AS Region,
+    RouteSheetDate,
+    FusingPeerNeedTime,FusingPeerNeedCount
+FROM
+    cedemo_ContractorRouteSheetTicketDetails
+WHERE
+    IsActive = 1
+    AND WorkType IS NOT NULL
+    AND CAST(RouteSheetDate AS DATE) = '2024-04-26'
+    AND FusingPeerNeed = 'Yes'
+ORDER BY
+    TicketNumber ASC;
+-- count of total tickets
+SELECT
+    COUNT(DISTINCT TicketNumber) AS TicketCount
+FROM
+    cedemo_ContractorRouteSheetTicketDetails
+WHERE
+    IsActive = 1
+    AND WorkType IS NOT NULL
+    AND CAST(RouteSheetDate AS DATE) = '2024-04-26'
+    AND FusingPeerNeed = 'Yes';
+
+User : Show me a breakdown of the second inspector assigment for bronx in contractor routesheet on jan 12
+User : User : Show me a breakdown of the second inspector assigment for bronx in contractor routesheet on jan 12
+SQL:
+SELECT DISTINCT
+  TicketNumber,
+  SecondInspectorNameITSID,
+  SecondInspectorQualified,
+  SecondInspectorDISAPool,
+  SecondInspectorNotes,
+  CASE
+    WHEN Region = 'X' THEN 'Bronx'
+    WHEN Region = 'M' THEN 'Manhattan'
+    WHEN Region = 'Q' THEN 'Queens'
+    WHEN Region = 'W' THEN 'Westchester'
+    ELSE Region
+  END AS Region
+FROM cedemo_ContractorRouteSheetTicketDetails
+WHERE IsActive = 1
+  AND Region = 'X'
+  AND CAST(RouteSheetDate AS DATE) = '2026-01-12';
+-- count of ticket numbers which has secondinspector assigned and not assigned
+SELECT
+    COUNT(*) AS TotalTicketsCount,
+    SUM(CASE WHEN HasInspector = 1 THEN 1 ELSE 0 END) 
+        AS TicketsCountWithSecondInspectorAssigned,
+    SUM(CASE WHEN HasInspector = 0 THEN 1 ELSE 0 END) 
+        AS TicketsCountWithSecondInspectorNotAssigned
+FROM (
+    SELECT
+        TicketNumber,
+        MAX(CASE 
+            WHEN SecondInspectorNameITSID IS NOT NULL 
+                 AND SecondInspectorNameITSID <> '' 
+            THEN 1 ELSE 0 
+        END) AS HasInspector
+    FROM cedemo_ContractorRouteSheetTicketDetails
+    WHERE IsActive = 1
+      AND Region = 'X'
+      AND CAST(RouteSheetDate AS DATE) = '2026-01-12'
+    GROUP BY TicketNumber
+) t;
+
+User : Show me all the night jobs  in contractor routesheet on feb 6 2026
+SQL:
+SELECT
+  TicketNumber,
+  WorkDescription,
+  WorkType,
+  CASE
+    WHEN Region = 'X' THEN 'Bronx'
+    WHEN Region = 'M' THEN 'Manhattan'
+    WHEN Region = 'Q' THEN 'Queens'
+    WHEN Region = 'W' THEN 'Westchester'
+    ELSE Region
+  END AS Region,
+  RouteSheetDate,
+  SpecialCondition
+FROM cedemo_ContractorRouteSheetTicketDetails
+WHERE IsActive = 1
+  AND WorkType IS NOT NULL
+  AND CAST(RouteSheetDate AS DATE) = '2026-02-06'
+  AND (
+    SpecialCondition LIKE '%Night Job%'
+  );
+-- tickets count query
+SELECT
+  Count(DISTINCT TicketNumber) as TotalTicketsCount
+FROM cedemo_ContractorRouteSheetTicketDetails
+WHERE IsActive = 1
+  AND WorkType IS NOT NULL
+  AND CAST(RouteSheetDate AS DATE) = '2026-02-06'
+  AND (
+    SpecialCondition LIKE '%Night Job%'
+  );
+
+User: Show me a breakdown of second inspector assigned to ContractorName CAC Industries Inc. on jan 23 2026 in contractor routesheet
+SQL:
+SELECT DISTINCT
+  SecondInspectorNameITSID,
+  SecondInspectorQualified,
+  SecondInspectorDISAPool,
+  SecondInspectorNotes,
+  CASE
+    WHEN Region = 'X' THEN 'Bronx'
+    WHEN Region = 'M' THEN 'Manhattan'
+    WHEN Region = 'Q' THEN 'Queens'
+    WHEN Region = 'W' THEN 'Westchester'
+    ELSE Region
+  END AS Region,
+  RouteSheetDate
+FROM cedemo_ContractorRouteSheetTicketDetails crstd
+JOIN CEDEMO_ContractorMaster cm ON crstd.VendorCode = cm.VenderCode
+WHERE cm.ContractorName = 'CAC Industries Inc.' 
+  AND cm.IsActive = 1
+  AND crstd.IsActive = 1
+  AND crstd.Region = 'X' AND SecondInspectorNameITSID IS NOT NULL
+  AND CAST(RouteSheetDate AS DATE) = '2026-01-23';
+-- count query
+SELECT
+  COUNT(DISTINCT SecondInspectorNameITSID) AS InspectorCount
+FROM cedemo_ContractorRouteSheetTicketDetails crstd
+JOIN CEDEMO_ContractorMaster cm ON crstd.VendorCode = cm.VenderCode
+WHERE cm.ContractorName = 'CAC Industries Inc.' 
+  AND cm.IsActive = 1
+  AND crstd.IsActive = 1
+  AND crstd.Region = 'X' AND SecondInspectorNameITSID IS NOT NULL
+  AND CAST(RouteSheetDate AS DATE) = '2026-01-23';
+
+User : summarise contractor routesheet on feb 18 2026
+SQL:
+-- section 1 : Work Type count Summary with Total tickets across all regions
+SELECT 
+    WorkType,
+    COUNT(DISTINCT TicketNumber) AS TotalTickets,
+    SUM(CASE WHEN RegionName = 'Bronx' THEN 1 ELSE 0 END) AS Bronx,
+    SUM(CASE WHEN RegionName = 'Manhattan' THEN 1 ELSE 0 END) AS Manhattan,
+    SUM(CASE WHEN RegionName = 'Queens' THEN 1 ELSE 0 END) AS Queens,
+    SUM(CASE WHEN RegionName = 'Westchester' THEN 1 ELSE 0 END) AS Westchester
+FROM (
+    SELECT DISTINCT TicketNumber ,
+        WorkType,
+        CASE
+            WHEN Region = 'X' THEN 'Bronx'
+            WHEN Region = 'M' THEN 'Manhattan'
+            WHEN Region = 'Q' THEN 'Queens'
+            WHEN Region = 'W' THEN 'Westchester'
+            ELSE Region
+        END AS RegionName
+    FROM cedemo_ContractorRouteSheetTicketDetails
+    WHERE IsActive = 1 
+        AND WorkType IS NOT NULL 
+        AND CAST(RouteSheetDate AS DATE) = '2026-02-18'
+) t
+GROUP BY WorkType
+ORDER BY TotalTickets DESC;
+-- section 2 : Work Description count Summary with Total tickets across all regions
+SELECT 
+    WorkDescription,
+    COUNT(DISTINCT TicketNumber) AS TotalTickets,
+    SUM(CASE WHEN RegionName = 'Bronx' THEN 1 ELSE 0 END) AS Bronx,
+    SUM(CASE WHEN RegionName = 'Manhattan' THEN 1 ELSE 0 END) AS Manhattan,
+    SUM(CASE WHEN RegionName = 'Queens' THEN 1 ELSE 0 END) AS Queens,
+    SUM(CASE WHEN RegionName = 'Westchester' THEN 1 ELSE 0 END) AS Westchester
+FROM (
+    SELECT DISTINCT TicketNumber ,
+        WorkDescription,
+        CASE
+            WHEN Region = 'X' THEN 'Bronx'
+            WHEN Region = 'M' THEN 'Manhattan'
+            WHEN Region = 'Q' THEN 'Queens'
+            WHEN Region = 'W' THEN 'Westchester'
+            ELSE Region
+        END AS RegionName
+    FROM cedemo_ContractorRouteSheetTicketDetails
+    WHERE IsActive = 1 
+        AND WorkDescription IS NOT NULL 
+        AND CAST(RouteSheetDate AS DATE) = '2026-02-18'
+) t
+GROUP BY WorkDescription
+ORDER BY TotalTickets DESC;
+-- section 3: OQ Exception details
+WITH base AS (
+    SELECT 
+        t.TicketNumber,
+        t.WorkType,
+        t.WorkDescription,
+        cm.ContractorDisplayName AS ContractorName,
+        e.ITSID,
+        e.EmployeeName,
+        CASE
+            WHEN t.Region = 'X' THEN 'Bronx'
+            WHEN t.Region = 'M' THEN 'Manhattan'
+            WHEN t.Region = 'Q' THEN 'Queens'
+            WHEN t.Region = 'W' THEN 'Westchester'
+            ELSE t.Region
+        END AS Region
+    FROM cedemo_ContractorRSAssignedEmployeeDetails e
+    JOIN cedemo_ContractorRouteSheetTicketDetails t
+        ON e.ContractorRouteSheetTicketDetailsID = t.ContractorRouteSheetTicketDetailsID
+    JOIN CEDEMO_ContractorMaster cm
+        ON t.VendorCode = cm.VenderCode
+    WHERE t.IsActive = 1
+        AND e.IsDeleted = 0
+        AND cm.IsActive = 1
+        AND e.Qualified = 'No'
+        AND CAST(t.RouteSheetDate AS DATE) = '2026-02-18'
+),
+-- Region total tickets
+region_counts AS (
+    SELECT 
+        Region,
+        COUNT(DISTINCT TicketNumber) AS RegionTotalTickets
+    FROM base
+    GROUP BY Region
+),
+-- Contractor tickets within region
+contractor_counts AS (
+    SELECT 
+        Region,
+        ContractorName,
+        COUNT(DISTINCT TicketNumber) AS ContractorTickets
+    FROM base
+    GROUP BY Region, ContractorName
+)
+SELECT 
+    b.Region,
+    rc.RegionTotalTickets,              --  total tickets in region
+    b.ContractorName,
+    cc.ContractorTickets,               --  tickets per contractor
+    b.TicketNumber,
+    b.WorkType + ' - ' + b.WorkDescription AS [WorkType-WorkDescription],
+    STRING_AGG(
+        CAST(b.ITSID AS VARCHAR) + '- ' + b.EmployeeName, 
+        CHAR(10)
+    ) AS NotQualifiedCrew
+FROM base b
+JOIN region_counts rc 
+    ON b.Region = rc.Region
+JOIN contractor_counts cc 
+    ON b.Region = cc.Region 
+   AND b.ContractorName = cc.ContractorName
+GROUP BY 
+    b.Region,
+    rc.RegionTotalTickets,
+    b.ContractorName,
+    cc.ContractorTickets,
+    b.TicketNumber,
+    b.WorkType,
+    b.WorkDescription
+ORDER BY 
+    b.Region,
+    b.ContractorName;
+-- section 4: DISA Exception details
+WITH base AS (
+    SELECT 
+        t.TicketNumber,
+        t.WorkType,
+        t.WorkDescription,
+        cm.ContractorDisplayName AS ContractorName,
+        e.ITSID,
+        e.EmployeeName,
+        e.EmployeeDISAPool,
+        CASE
+            WHEN t.Region = 'X' THEN 'Bronx'
+            WHEN t.Region = 'M' THEN 'Manhattan'
+            WHEN t.Region = 'Q' THEN 'Queens'
+            WHEN t.Region = 'W' THEN 'Westchester'
+            ELSE t.Region
+        END AS Region
+    FROM cedemo_ContractorRSAssignedEmployeeDetails e
+    JOIN cedemo_ContractorRouteSheetTicketDetails t
+        ON e.ContractorRouteSheetTicketDetailsID = t.ContractorRouteSheetTicketDetailsID
+    JOIN CEDEMO_ContractorMaster cm
+        ON t.VendorCode = cm.VenderCode
+    WHERE t.IsActive = 1
+        AND e.IsDeleted = 0
+        AND cm.IsActive = 1
+        AND (e.EmployeeDISAPool = '' OR e.EmployeeDISAPool IS NULL)
+        AND CAST(t.RouteSheetDate AS DATE) = '2026-02-18'
+),
+-- Region total tickets
+region_counts AS (
+    SELECT 
+        Region,
+        COUNT(DISTINCT TicketNumber) AS RegionTotalTickets
+    FROM base
+    GROUP BY Region
+),
+-- Contractor tickets within region
+contractor_counts AS (
+    SELECT 
+        Region,
+        ContractorName,
+        COUNT(DISTINCT TicketNumber) AS ContractorTickets
+    FROM base
+    GROUP BY Region, ContractorName
+)
+SELECT 
+    b.Region,
+    rc.RegionTotalTickets,
+    b.ContractorName,
+    cc.ContractorTickets,
+    b.TicketNumber,
+    b.WorkType + ' - ' + b.WorkDescription AS [WorkType-WorkDescription],
+    STRING_AGG(
+        CAST(b.ITSID AS VARCHAR) + '- ' + b.EmployeeName, 
+        CHAR(10)
+    ) AS DISAExceptionCrew
+FROM base b
+JOIN region_counts rc 
+    ON b.Region = rc.Region
+JOIN contractor_counts cc 
+    ON b.Region = cc.Region 
+   AND b.ContractorName = cc.ContractorName
+GROUP BY 
+    b.Region,
+    rc.RegionTotalTickets,
+    b.ContractorName,
+    cc.ContractorTickets,
+    b.TicketNumber,
+    b.WorkType,
+    b.WorkDescription
+ORDER BY 
+    b.Region,
+    b.ContractorName;
+-- section 5 : Inspector Assignment 
+-- Inspector Assignment - Tickets with counts
+WITH base AS (
+    SELECT 
+        t.TicketNumber,
+        t.WorkLocation,
+        cm.ContractorDisplayName AS ContractorName,
+        t.InspectorCoveringName,
+        CASE
+            WHEN t.Region = 'X' THEN 'Bronx'
+            WHEN t.Region = 'M' THEN 'Manhattan'
+            WHEN t.Region = 'Q' THEN 'Queens'
+            WHEN t.Region = 'W' THEN 'Westchester'
+            ELSE t.Region
+        END AS Region
+    FROM cedemo_ContractorRouteSheetTicketDetails t
+    JOIN CEDEMO_ContractorMaster cm
+        ON t.VendorCode = cm.VenderCode
+    WHERE t.IsActive = 1
+        AND cm.IsActive = 1
+        AND CAST(t.RouteSheetDate AS DATE) = '2026-02-18'
+),
+-- Region total tickets
+region_counts AS (
+    SELECT 
+        Region,
+        COUNT(DISTINCT TicketNumber) AS RegionTotalTickets
+    FROM base
+    GROUP BY Region
+),
+-- Contractor tickets within region
+contractor_counts AS (
+    SELECT 
+        Region,
+        ContractorName,
+        COUNT(DISTINCT TicketNumber) AS ContractorTickets
+    FROM base
+    GROUP BY Region, ContractorName
+)
+SELECT 
+    b.Region,
+    rc.RegionTotalTickets,           -- Total tickets in region
+    b.ContractorName,
+    cc.ContractorTickets,            -- Total tickets for contractor in region
+    b.TicketNumber,
+    b.WorkLocation,
+    b.InspectorCoveringName
+FROM base b
+JOIN region_counts rc
+    ON b.Region = rc.Region
+JOIN contractor_counts cc
+    ON b.Region = cc.Region
+   AND b.ContractorName = cc.ContractorName
+ORDER BY 
+    b.Region,
+    b.ContractorName,
+    b.TicketNumber,
+    b.InspectorCoveringName;
+-- section 6 Peer fusing details
+-- Peer Fusing  Report with WorkType-WorkDescription column
+WITH base AS (
+    SELECT 
+        t.TicketNumber,
+        t.WorkLocation,
+        t.WorkType + ' - ' + t.WorkDescription AS WorkType_WorkDescription,
+        t.FusingPeerNeedCount,t.FusingPeerNeedTime,
+        cm.ContractorDisplayName AS ContractorName,
+        CASE
+            WHEN t.Region = 'X' THEN 'Bronx'
+            WHEN t.Region = 'M' THEN 'Manhattan'
+            WHEN t.Region = 'Q' THEN 'Queens'
+            WHEN t.Region = 'W' THEN 'Westchester'
+            ELSE t.Region
+        END AS Region
+    FROM cedemo_ContractorRouteSheetTicketDetails t
+    JOIN CEDEMO_ContractorMaster cm
+        ON t.VendorCode = cm.VenderCode
+    WHERE t.IsActive = 1
+        AND cm.IsActive = 1
+        AND CAST(t.RouteSheetDate AS DATE) = '2026-02-18'
+        AND t.FusingPeerNeed = 'Yes'
+        AND t.WorkType IS NOT NULL
+),
+-- Region total ticket counts
+region_counts AS (
+    SELECT 
+        Region,
+        COUNT(DISTINCT TicketNumber) AS RegionTotalTickets
+    FROM base
+    GROUP BY Region
+),
+-- Contractor ticket counts within region
+contractor_counts AS (
+    SELECT 
+        Region,
+        ContractorName,
+        COUNT(DISTINCT TicketNumber) AS ContractorTickets
+    FROM base
+    GROUP BY Region, ContractorName
+)
+SELECT 
+    b.Region,
+    rc.RegionTotalTickets,
+    b.ContractorName,
+    cc.ContractorTickets,
+    b.TicketNumber,
+    b.WorkLocation,
+    b.WorkType_WorkDescription,
+    b.FusingPeerNeedCount,b.FusingPeerNeedTime
+FROM base b
+JOIN region_counts rc
+    ON b.Region = rc.Region
+JOIN contractor_counts cc
+    ON b.Region = cc.Region
+   AND b.ContractorName = cc.ContractorName
+ORDER BY 
+    b.Region,
+    b.ContractorName,
+    b.TicketNumber;

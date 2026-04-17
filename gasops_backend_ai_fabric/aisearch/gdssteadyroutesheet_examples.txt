@@ -1,0 +1,44 @@
+
+User : show me the breakdown of gds mech a shifts for steady by region
+SQL:
+SELECT Region, COUNT(DISTINCT ITSID) AS MechASteadyEmployeeCount, scmap.ShiftCountCategory
+FROM CEDEMO_MechASteadyEmployeeScheduleDetails mechA
+JOIN CEDEMO_ShiftCountCategorytoShiftCodeMap scmap
+    ON mechA.FridayShift = scmap.ShiftCode
+WHERE mechA.IsActive = 1
+  AND scmap.IsActive = 1
+  AND mechA.YearNumber = '2026'
+  AND mechA.FridayDate = '2026-04-17'
+GROUP BY Region, scmap.ShiftCountCategory
+ORDER BY Region ASC;
+-- count 
+SELECT COUNT(DISTINCT mechA.ITSID) AS MechASteadyTotalEmployees
+FROM CEDEMO_MechASteadyEmployeeScheduleDetails mechA
+JOIN CEDEMO_ShiftCountCategorytoShiftCodeMap scmap
+    ON mechA.FridayShift = scmap.ShiftCode
+WHERE mechA.IsActive = 1
+  AND scmap.IsActive = 1
+  AND mechA.YearNumber = '2026'
+  AND mechA.FridayDate = '2026-04-17';
+
+
+User : are there any not qualified employees in todays mech a steady route in bronx
+SQL:
+ SELECT EmployeeName, ITSID, Region, FridayShift, FridayNOTQualifiedWorkDescriptions, FridayMissingCoveredTaskNums
+FROM CEDEMO_MechASteadyEmployeeScheduleDetails
+WHERE IsActive = 1
+  AND YearNumber = '2026'
+  AND Region LIKE '%Bronx%'
+  AND FridayDate = '2026-04-17'
+  AND FridayNOTQualifiedWorkDescriptions IS NOT NULL AND FridayNOTQualifiedWorkDescriptions != ''
+  AND FridayMissingCoveredTaskNums IS NOT NULL AND FridayMissingCoveredTaskNums != ''
+ORDER BY EmployeeName ASC;
+-- count 
+SELECT COUNT(DISTINCT ITSID) AS NotQualifiedEmployeeCount
+FROM CEDEMO_MechASteadyEmployeeScheduleDetails
+WHERE IsActive = 1
+  AND YearNumber = '2026'
+  AND Region LIKE '%Bronx%'
+  AND FridayDate = '2026-04-17'
+  AND FridayNOTQualifiedWorkDescriptions IS NOT NULL AND FridayNOTQualifiedWorkDescriptions != ''
+  AND FridayMissingCoveredTaskNums IS NOT NULL AND FridayMissingCoveredTaskNums != '';

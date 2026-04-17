@@ -1,0 +1,203 @@
+
+
+# TABLE : cedemo_CompanySLIEmployeeScheduleDetails  
+Description:  
+Stores weekly company employee schedule details for SLI operations, including  assignments, daily shifts, work activity functions, qualifications, notes, and audit tracking information.
+
+## Columns:
+- SLIEmployeeScheduleID (bigint): Unique identifier for the schedule record.
+- YearNumber (varchar): Year of the schedule.
+- Region (varchar): Region where the work is assigned.
+- WeekNumber (bigint): Week number of the schedule.
+- EmployeeName (varchar): Planned employee name.
+- ITSIDCECT (varchar): Planned CECT ITS ID.
+- ITSID (varchar): Planned ITS ID.
+- EmployeeCompanyID (varchar): Planned employee company ID.
+- SundayDate (datetime2): Date for Sunday.
+- MondayDate (datetime2): Date for Monday.
+- TuesdayDate (datetime2): Date for Tuesday.
+- WednesdayDate (datetime2): Date for Wednesday.
+- ThursdayDate (datetime2): Date for Thursday.
+- FridayDate (datetime2): Date for Friday.
+- SaturdayDate (datetime2): Date for Saturday.
+- SundayShift (varchar): Planned shift for Sunday.
+- MondayShift (varchar): Planned shift for Monday.
+- TuesdayShift (varchar): Planned shift for Tuesday.
+- WednesdayShift (varchar): Planned shift for Wednesday.
+- ThursdayShift (varchar): Planned shift for Thursday.
+- FridayShift (varchar): Planned shift for Friday.
+- SaturdayShift (varchar): Planned shift for Saturday.
+- SundayNotes (varchar): Notes for Sunday.
+- MondayNotes (varchar): Notes for Monday.
+- TuesdayNotes (varchar): Notes for Tuesday.
+- WednesdayNotes (varchar): Notes for Wednesday.
+- ThursdayNotes (varchar): Notes for Thursday.
+- FridayNotes (varchar): Notes for Friday.
+- SaturdayNotes (varchar): Notes for Saturday.
+- SundayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Sunday.
+- MondayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Monday.
+- TuesdayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Tuesday.
+- WednesdayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Wednesday.
+- ThursdayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Thursday.
+- FridayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Friday.
+- SaturdayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Saturday.
+- SundayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Sunday.
+- MondayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Monday.
+- TuesdayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Tuesday.
+- WednesdayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Wednesday.
+- ThursdayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Thursday.
+- FridayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Friday.
+- SaturdayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Saturday.
+- SundayMissingCoveredTaskNums (varchar): Missing covered tasks for Sunday.
+- MondayMissingCoveredTaskNums (varchar): Missing covered tasks for Monday.
+- TuesdayMissingCoveredTaskNums (varchar): Missing covered tasks for Tuesday.
+- WednesdayMissingCoveredTaskNums (varchar): Missing covered tasks for Wednesday.
+- ThursdayMissingCoveredTaskNums (varchar): Missing covered tasks for Thursday.
+- FridayMissingCoveredTaskNums (varchar): Missing covered tasks for Friday.
+- SaturdayMissingCoveredTaskNums (varchar): Missing covered tasks for Saturday.
+- SundayDISAPool (varchar): DISA pool status for Sunday.
+- MondayDISAPool (varchar): DISA pool status for Monday.
+- TuesdayDISAPool (varchar): DISA pool status for Tuesday.
+- WednesdayDISAPool (varchar): DISA pool status for Wednesday.
+- ThursdayDISAPool (varchar): DISA pool status for Thursday.
+- FridayDISAPool (varchar): DISA pool status for Friday.
+- SaturdayDISAPool (varchar): DISA pool status for Saturday.
+- IsDeleted (bit): Indicates whether the record is deleted. Always consider IsDeleted = 0.
+
+
+# TABLE : cedemo_ContractorsSLIEmployeeScheduleDetails  
+Description:  
+Stores weekly contractor employee schedule details for SLI operations, including planned assignments, daily shifts, work activity functions, qualifications, notes, and audit tracking information.
+
+## Columns:
+- SLIEmployeeScheduleID (bigint): Unique identifier for the schedule record.
+- YearNumber (varchar): Year of the schedule.
+- Region (varchar): Region where the work is assigned.
+- WeekNumber (bigint): Week number of the schedule.
+- EmployeeName (varchar): Planned employee name.
+- ITSIDCECT (varchar): Planned CECT ITS ID.
+- ITSID (varchar): Planned ITS ID.
+- EmployeeCompanyID (varchar): Planned employee company ID.
+- SundayDate (datetime2): Date for Sunday.
+- MondayDate (datetime2): Date for Monday.
+- TuesdayDate (datetime2): Date for Tuesday.
+- WednesdayDate (datetime2): Date for Wednesday.
+- ThursdayDate (datetime2): Date for Thursday.
+- FridayDate (datetime2): Date for Friday.
+- SaturdayDate (datetime2): Date for Saturday.
+- SundayShift (varchar): Planned shift for Sunday.
+- MondayShift (varchar): Planned shift for Monday.
+- TuesdayShift (varchar): Planned shift for Tuesday.
+- WednesdayShift (varchar): Planned shift for Wednesday.
+- ThursdayShift (varchar): Planned shift for Thursday.
+- FridayShift (varchar): Planned shift for Friday.
+- SaturdayShift (varchar): Planned shift for Saturday.
+- SundayNotes (varchar): Notes for Sunday.
+- MondayNotes (varchar): Notes for Monday.
+- TuesdayNotes (varchar): Notes for Tuesday.
+- WednesdayNotes (varchar): Notes for Wednesday.
+- ThursdayNotes (varchar): Notes for Thursday.
+- FridayNotes (varchar): Notes for Friday.
+- SaturdayNotes (varchar): Notes for Saturday.
+- SundayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Sunday.
+- MondayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Monday.
+- TuesdayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Tuesday.
+- WednesdayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Wednesday.
+- ThursdayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Thursday.
+- FridayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Friday.
+- SaturdayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Saturday.
+- SundayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Sunday.
+- MondayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Monday.
+- TuesdayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Tuesday.
+- WednesdayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Wednesday.
+- ThursdayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Thursday.
+- FridayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Friday.
+- SaturdayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Saturday.
+- SundayMissingCoveredTaskNums (varchar): Missing covered tasks for Sunday.
+- MondayMissingCoveredTaskNums (varchar): Missing covered tasks for Monday.
+- TuesdayMissingCoveredTaskNums (varchar): Missing covered tasks for Tuesday.
+- WednesdayMissingCoveredTaskNums (varchar): Missing covered tasks for Wednesday.
+- ThursdayMissingCoveredTaskNums (varchar): Missing covered tasks for Thursday.
+- FridayMissingCoveredTaskNums (varchar): Missing covered tasks for Friday.
+- SaturdayMissingCoveredTaskNums (varchar): Missing covered tasks for Saturday.
+- SundayDISAPool (varchar): DISA pool status for Sunday.
+- MondayDISAPool (varchar): DISA pool status for Monday.
+- TuesdayDISAPool (varchar): DISA pool status for Tuesday.
+- WednesdayDISAPool (varchar): DISA pool status for Wednesday.
+- ThursdayDISAPool (varchar): DISA pool status for Thursday.
+- FridayDISAPool (varchar): DISA pool status for Friday.
+- SaturdayDISAPool (varchar): DISA pool status for Saturday.
+- IsDeleted (bit): Indicates whether the record is deleted. Always consider IsDeleted = 0.
+
+
+# TABLE : cedemo_ContractorsMLRSLIEmployeeScheduleDetails  
+Description:  
+Stores weekly contractor MLR employee schedule details for contractors MLR SLI operations, including planned assignments, daily shifts, work activity functions, qualifications, notes, and audit tracking information.
+
+## Columns:
+- SLIEmployeeScheduleID (bigint): Unique identifier for the schedule record.
+- YearNumber (varchar): Year of the schedule.
+- Region (varchar): Region where the work is assigned.
+- WeekNumber (bigint): Week number of the schedule.
+- EmployeeName (varchar): Planned employee name.
+- ITSIDCECT (varchar): Planned CECT ITS ID.
+- ITSID (varchar): Planned ITS ID.
+- EmployeeCompanyID (varchar): Planned employee company ID.
+- SundayDate (datetime2): Date for Sunday.
+- MondayDate (datetime2): Date for Monday.
+- TuesdayDate (datetime2): Date for Tuesday.
+- WednesdayDate (datetime2): Date for Wednesday.
+- ThursdayDate (datetime2): Date for Thursday.
+- FridayDate (datetime2): Date for Friday.
+- SaturdayDate (datetime2): Date for Saturday.
+- SundayShift (varchar): Planned shift for Sunday.
+- MondayShift (varchar): Planned shift for Monday.
+- TuesdayShift (varchar): Planned shift for Tuesday.
+- WednesdayShift (varchar): Planned shift for Wednesday.
+- ThursdayShift (varchar): Planned shift for Thursday.
+- FridayShift (varchar): Planned shift for Friday.
+- SaturdayShift (varchar): Planned shift for Saturday.
+- SundayNotes (varchar): Notes for Sunday.
+- MondayNotes (varchar): Notes for Monday.
+- TuesdayNotes (varchar): Notes for Tuesday.
+- WednesdayNotes (varchar): Notes for Wednesday.
+- ThursdayNotes (varchar): Notes for Thursday.
+- FridayNotes (varchar): Notes for Friday.
+- SaturdayNotes (varchar): Notes for Saturday.
+- SundayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Sunday.
+- MondayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Monday.
+- TuesdayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Tuesday.
+- WednesdayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Wednesday.
+- ThursdayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Thursday.
+- FridayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Friday.
+- SaturdayQualifiedWorkActivityFunctions (varchar): Qualified work activity functions for Saturday.
+- SundayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Sunday.
+- MondayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Monday.
+- TuesdayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Tuesday.
+- WednesdayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Wednesday.
+- ThursdayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Thursday.
+- FridayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Friday.
+- SaturdayNOTQualifiedWorkActivityFunctions (varchar): Non-qualified work activity functions for Saturday.
+- SundayMissingCoveredTaskNums (varchar): Missing covered tasks for Sunday.
+- MondayMissingCoveredTaskNums (varchar): Missing covered tasks for Monday.
+- TuesdayMissingCoveredTaskNums (varchar): Missing covered tasks for Tuesday.
+- WednesdayMissingCoveredTaskNums (varchar): Missing covered tasks for Wednesday.
+- ThursdayMissingCoveredTaskNums (varchar): Missing covered tasks for Thursday.
+- FridayMissingCoveredTaskNums (varchar): Missing covered tasks for Friday.
+- SaturdayMissingCoveredTaskNums (varchar): Missing covered tasks for Saturday.
+- SundayDISAPool (varchar): DISA pool status for Sunday.
+- MondayDISAPool (varchar): DISA pool status for Monday.
+- TuesdayDISAPool (varchar): DISA pool status for Tuesday.
+- WednesdayDISAPool (varchar): DISA pool status for Wednesday.
+- ThursdayDISAPool (varchar): DISA pool status for Thursday.
+- FridayDISAPool (varchar): DISA pool status for Friday.
+- SaturdayDISAPool (varchar): DISA pool status for Saturday.
+- IsDeleted (bit): Indicates whether the record is deleted. Always consider IsDeleted = 0.
+
+
+
+
+FILTER CONDITIONS (ALWAYS APPLY):
+- cedemo_CompanySLIEmployeeScheduleDetails.IsDeleted = 0
+- cedemo_ContractorsSLIEmployeeScheduleDetails.IsDeleted = 0
+- cedemo_ContractorsMLRSLIEmployeeScheduleDetails.IsDeleted = 0

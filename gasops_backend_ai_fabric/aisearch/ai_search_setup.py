@@ -32,7 +32,15 @@ vector_store_password = os.getenv("AZURE_SEARCH_KEY")
 
 
 
-index_name = "gasopsroutesheetindex"  # Azure Search index name
+# index_name = "gasopsroutesheetindex"  # Azure Search index name
+# index_name = "contractorroutesheetindex"  # Azure Search index name for contractor routesheet
+# index_name = "tunnelsroutesheetindex"  # Azure Search index name for tunnels routesheet
+# index_name = 'corrosionroutesheetindex'  # Azure Search index name for corrosion routesheet
+# index_name = 'leaksurveyroutesheetindex'  # Azure Search index name for leaksurvey routesheet
+# index_name = 'sliroutesheetindex'  # Azure Search index name for sli routesheet
+# index_name = 'gdssteadyroutesheetindex'  # Azure Search index name for gds steady routesheet
+index_name = 'gdsrotatingroutesheetindex'  # Azure Search index name for gds rotating routesheet
+
 
 # Initialize embeddings
 embeddings = AzureOpenAIEmbeddings(
@@ -86,11 +94,42 @@ def perform_similarity_search(vector_store, query: str, k: int):
 if __name__ == "__main__":
     vector_store = None 
     try:
-        vector_store = initialize_vector_store(index_name="gasopsroutesheetindex")
-        docs = process_documents("gasopsroutesheet_examples.txt")    # path to the examples txt file to index
+        ## for gas operations routesheet examples
+        # vector_store = initialize_vector_store(index_name="gasopsroutesheetindex")
+        # docs = process_documents("gasopsroutesheet_examples.txt")    # path to the examples txt file to index
+        # vector_store.add_documents(documents=docs)
+        ## for contractor routesheet examples
+        # vector_store = initialize_vector_store(index_name="contractorroutesheetindex")
+        # docs = process_documents("contractorroutesheet_examples.txt")    # path to the examples txt file to index
+        # vector_store.add_documents(documents=docs)
+        # for tunnels routesheet examples
+        # vector_store = initialize_vector_store(index_name="tunnelsroutesheetindex")
+        # docs = process_documents("tunnelsroutesheet_examples.txt")    # path to the examples txt file to index
+        # vector_store.add_documents(documents=docs)
+        # for corrosion routesheet examples
+        # vector_store = initialize_vector_store(index_name="corrosionroutesheetindex")
+        # docs = process_documents("corrosionroutesheet_examples.txt")    # path to the examples txt file to index
+        # vector_store.add_documents(documents=docs) 
+        # for leaksurvey routesheet examples
+        # vector_store = initialize_vector_store(index_name="leaksurveyroutesheetindex")
+        # docs = process_documents("leaksurveyroutesheet_examples.txt")    # path to the examples txt file to index
+        # vector_store.add_documents(documents=docs)  
+        # for sli routesheet examples
+        # vector_store = initialize_vector_store(index_name="sliroutesheetindex")
+        # docs = process_documents("sliroutesheet_examples.txt")    # path to the examples txt file to index
+        # vector_store.add_documents(documents=docs) 
+        # for gds steady routesheet examples
+        # vector_store = initialize_vector_store(index_name="gdssteadyroutesheetindex")
+        # docs = process_documents("gdssteadyroutesheet_examples.txt")    # path to the examples txt file to index
+        # vector_store.add_documents(documents=docs)
+        # for gds rotating routesheet examples
+        vector_store = initialize_vector_store(index_name="gdsrotatingroutesheetindex")
+        docs = process_documents("gdsrotatingroutesheet_examples.txt")    # path to the examples txt file to index
         vector_store.add_documents(documents=docs)
         
     finally:
         logging.info("Closing vector store.")
         if hasattr(vector_store, 'close'):
             vector_store.close()
+
+

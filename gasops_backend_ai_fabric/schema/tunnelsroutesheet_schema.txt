@@ -1,0 +1,101 @@
+Tunnels Routesheet Schema :
+
+# TABLE : cedemo_TunnelsRouteSheetHeader  
+Description:  
+Stores header-level information for tunnels route sheets, including route scheduling details, supervisors, management roles, contact information, and overall route sheet status.
+
+## Columns:
+- TunnelsRouteSheetID (bigint): Unique identifier for the tunnels route sheet record.
+- RouteSheetDate (datetime2): Date and time associated with the route sheet.
+- RouteSheetDay (varchar): Day of the route sheet.
+- ShiftData (varchar): Shift-related information for the route sheet.
+- Supervisor1ID (bigint): Identifier of the first supervisor.
+- Supervisor1Name (varchar): Name of the first supervisor.
+- Supervisor1Vehicle (varchar): Vehicle assigned to the first supervisor.
+- Supervisor1Phone (varchar): Phone number of the first supervisor.
+- Supervisor2ID (bigint): Identifier of the second supervisor.
+- Supervisor2Name (varchar): Name of the second supervisor.
+- Supervisor2Vehicle (varchar): Vehicle assigned to the second supervisor.
+- Supervisor2Phone (varchar): Phone number of the second supervisor.
+- Supervisor3ID (bigint): Identifier of the third supervisor.
+- Supervisor3Name (varchar): Name of the third supervisor.
+- Supervisor3Vehicle (varchar): Vehicle assigned to the third supervisor.
+- Supervisor3Phone (varchar): Phone number of the third supervisor.
+- EHSSpecialistID (bigint): Identifier of the EHS specialist.
+- EHSSpecialistName (varchar): Name of the EHS specialist.
+- EHSSpecialistVehicle (varchar): Vehicle assigned to the EHS specialist.
+- EHSSpecialistPhone (varchar): Phone number of the EHS specialist.
+- ManagerID (bigint): Identifier of the manager.
+- ManagerName (varchar): Name of the manager.
+- ManagerVehicle (varchar): Vehicle assigned to the manager.
+- ManagerPhone (varchar): Phone number of the manager.
+- PlannerID (bigint): Identifier of the planner.
+- PlannerName (varchar): Name of the planner.
+- PlannerVehicle (varchar): Vehicle assigned to the planner.
+- PlannerPhone (varchar): Phone number of the planner.
+- EngineerID (bigint): Identifier of the engineer.
+- EngineerName (varchar): Name of the engineer.
+- EngineerVehicle (varchar): Vehicle assigned to the engineer.
+- EngineerPhone (varchar): Phone number of the engineer.
+- ProjectSpecialistID (bigint): Identifier of the project specialist.
+- ProjectSpecialistName (varchar): Name of the project specialist.
+- ProjectSpecialistVehicle (varchar): Vehicle assigned to the project specialist.
+- ProjectSpecialistPhone (varchar): Phone number of the project specialist.
+- RouteSheetStatus (varchar): Current status of the route sheet.
+- AdditonalNotes (varchar): Additional notes related to the route sheet.
+- IsActive (bit): Indicates whether the record is active. Always apply IsActive = 1.
+
+
+# TABLE : cedemo_TunnelsRSAssignedEmployeeDetails  
+Description:  
+Stores employee-level assignment details for tunnels route sheets, including work location, supervisor mapping, employee identification, qualifications, and work descriptions.
+
+## Columns:
+- TunnelsRSAssignedEmployeeDetailsID (bigint): Unique identifier for the assigned employee details record.
+- TunnelsRouteSheetID (bigint): Identifier linking the employee to a tunnels route sheet.
+- WorkLocation (varchar): Location where the employee is assigned to work.
+- SupervisorID (bigint): Identifier of the supervisor overseeing the employee.
+- SupervisorName (varchar): Name of the supervisor.
+- ITSID (varchar): ITS identifier of the employee.
+- ITSIDCECT (varchar): CECT ITS identifier of the employee.
+- EmployeeName (varchar): Full name of the employee.
+- EmployeeID (varchar): Employee identifier.
+- EmployeeMasterIDCECT (varchar): Master employee identifier in CECT system.
+- EmployeeVehicle (varchar): Vehicle assigned to the employee.
+- AccountNumber (varchar): Account number associated with the employee.
+- WorkDescriptionID (bigint): Identifier of the work description.
+- WorkDescription (varchar): Description of the work assigned.
+- EmployeeDISAPool (varchar): Indicates whether the employee belongs to the DISA pool.
+- Qualified (varchar): Indicates whether the employee is qualified. Has Yes, No values.
+- MissingCoveredTasks (varchar): List of tasks not covered by the employee qualifications.
+- QualificationValidatedDate (datetime2): Date when qualification was validated.
+- Notes (varchar): Additional notes related to the employee assignment.
+- IsDeleted (bit): Indicates whether the record is deleted. Always consider IsDeleted = 0.
+
+
+# TABLE : cedemo_TunnelsRSLeaveEmployeeDetails  
+Description:  
+Stores details of employees who are on leave for tunnels route sheets, including absence reasons, employee identification, and audit tracking information.
+
+## Columns:
+- TunnelsRSLeaveEmployeeDetailsID (bigint): Unique identifier for the leave employee record.
+- TunnelsRouteSheetID (bigint): Identifier linking the leave record to a tunnels route sheet.
+- ITSID (varchar): ITS identifier of the employee.
+- ITSIDCECT (varchar): CECT ITS identifier of the employee.
+- EmployeeName (varchar): Name of the employee on leave.
+- EmployeeID (varchar): Employee identifier.
+- EmployeeMasterIDCECT (varchar): Master employee identifier in CECT system.
+- ReasonForAbsence (varchar): Reason for the employee’s absence.
+- Comments (varchar): Additional comments related to the absence.
+- IsDeleted (bit): Indicates whether the record is deleted. Always consider IsDeleted = 0.
+
+
+RELATIONSHIPS:
+cedemo_TunnelsRouteSheetHeader.TunnelsRouteSheetID = cedemo_TunnelsRSAssignedEmployeeDetails.TunnelsRouteSheetID
+cedemo_TunnelsRouteSheetHeader.TunnelsRouteSheetID = cedemo_TunnelsRSLeaveEmployeeDetails.TunnelsRouteSheetID
+
+
+FILTER CONDITIONS (ALWAYS APPLY):
+- cedemo_TunnelsRouteSheetHeader.IsActive = 1
+- cedemo_TunnelsRSAssignedEmployeeDetails.IsDeleted = 0
+- cedemo_TunnelsRSLeaveEmployeeDetails.IsDeleted = 0

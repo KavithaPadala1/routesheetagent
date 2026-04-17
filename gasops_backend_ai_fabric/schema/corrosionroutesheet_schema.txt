@@ -1,0 +1,91 @@
+Corrossion Routesheet Schema :
+
+# TABLE : cedemo_CorrosionRouteSheetHeader  
+Description:  
+Stores header-level information for corrosion route sheets, including supervisors, planner, section manager, contact details, and overall route sheet status.
+
+## Columns:
+- CorrosionRouteSheetID (bigint): Unique identifier for the corrosion route sheet record.
+- RouteSheetDate (datetime2): Date and time associated with the route sheet.
+- RouteSheetDay (varchar): Day of the route sheet.
+- Supervisor1ID (bigint): Identifier of the first supervisor.
+- Supervisor1Name (varchar): Name of the first supervisor.
+- Supervisor1Vehicle (varchar): Vehicle assigned to the first supervisor.
+- Supervisor1Phone (varchar): Phone number of the first supervisor.
+- Supervisor2ID (bigint): Identifier of the second supervisor.
+- Supervisor2Name (varchar): Name of the second supervisor.
+- Supervisor2Vehicle (varchar): Vehicle assigned to the second supervisor.
+- Supervisor2Phone (varchar): Phone number of the second supervisor.
+- Supervisor3ID (bigint): Identifier of the third supervisor.
+- Supervisor3Name (varchar): Name of the third supervisor.
+- Supervisor3Vehicle (varchar): Vehicle assigned to the third supervisor.
+- Supervisor3Phone (varchar): Phone number of the third supervisor.
+- Supervisor4ID (bigint): Identifier of the fourth supervisor.
+- Supervisor4Name (varchar): Name of the fourth supervisor.
+- Supervisor4Vehicle (varchar): Vehicle assigned to the fourth supervisor.
+- Supervisor4Phone (varchar): Phone number of the fourth supervisor.
+- PlannerID (bigint): Identifier of the planner.
+- PlannerName (varchar): Name of the planner.
+- PlannerVehicle (varchar): Vehicle assigned to the planner.
+- PlannerPhone (varchar): Phone number of the planner.
+- SectionManagerID (bigint): Identifier of the section manager.
+- SectionManagerName (varchar): Name of the section manager.
+- SectionManagerVehicle (varchar): Vehicle assigned to the section manager.
+- SectionManagerPhone (varchar): Phone number of the section manager.
+- RouteSheetStatus (varchar): Current status of the route sheet.
+- AdditonalNotes (varchar): Additional notes related to the route sheet.
+- IsActive (bit): Indicates whether the record is active. Always apply IsActive = 1.
+
+
+# TABLE : cedemo_CorrosionRSAssignedEmployeeDetails  
+Description:  
+Stores employee-level assignment details for corrosion route sheets, including employee identification, work details, qualifications, and validation status.
+
+## Columns:
+- CorrosionRSAssignedEmployeeDetailsID (bigint): Unique identifier for the assigned employee record.
+- CorrosionRouteSheetID (bigint): Identifier linking the employee to a corrosion route sheet.
+- ITSID (varchar): ITS identifier of the employee.
+- ITSIDCECT (varchar): CECT ITS identifier of the employee.
+- EmployeeName (varchar): Full name of the employee.
+- EmployeeID (varchar): Employee identifier.
+- EmployeeMasterIDCECT (varchar): Master employee identifier in CECT system.
+- EmployeeVehicle (varchar): Vehicle assigned to the employee.
+- WorkLocation (varchar): Location where the employee is assigned to work.
+- Borough (varchar): Borough of the work location.
+- WorkDescriptionID (bigint): Identifier of the work description.
+- WorkDescription (varchar): Description of the assigned work.
+- EmployeeDISAPool (varchar): Indicates whether the employee belongs to the DISA pool.
+- Qualified (varchar): Indicates whether the employee is qualified (Yes/No).
+- MissingCoveredTasks (varchar): Tasks not covered under employee qualifications.
+- QualificationValidatedDate (datetime2): Date when qualification was validated.
+- IsDeleted (bit): Indicates whether the record is deleted. Always consider IsDeleted = 0.
+- TitleName (varchar): Title of the employee.
+- Notes (varchar): Additional notes.
+
+
+# TABLE : cedemo_CorrosionRSLeaveEmployeeDetails  
+Description:  
+Stores details of employees on leave for corrosion route sheets, including absence reasons and employee identification.
+
+## Columns:
+- CorrosionRSLeaveEmployeeDetailsID (bigint): Unique identifier for the leave employee record.
+- CorrosionRouteSheetID (bigint): Identifier linking the leave record to a corrosion route sheet.
+- ITSID (varchar): ITS identifier of the employee.
+- ITSIDCECT (varchar): CECT ITS identifier of the employee.
+- EmployeeName (varchar): Name of the employee.
+- EmployeeID (varchar): Employee identifier.
+- EmployeeMasterIDCECT (varchar): Master employee identifier in CECT system.
+- ReasonForAbsence (varchar): Reason for absence.
+- Comments (varchar): Additional comments.
+- IsDeleted (bit): Indicates whether the record is deleted. Always consider IsDeleted = 0.
+
+
+# RELATIONSHIPS:
+cedemo_CorrosionRouteSheetHeader.CorrosionRouteSheetID = cedemo_CorrosionRSAssignedEmployeeDetails.CorrosionRouteSheetID  
+cedemo_CorrosionRouteSheetHeader.CorrosionRouteSheetID = cedemo_CorrosionRSLeaveEmployeeDetails.CorrosionRouteSheetID  
+
+
+# FILTER CONDITIONS (ALWAYS APPLY):
+- cedemo_CorrosionRouteSheetHeader.IsActive = 1  
+- cedemo_CorrosionRSAssignedEmployeeDetails.IsDeleted = 0  
+- cedemo_CorrosionRSLeaveEmployeeDetails.IsDeleted = 0  

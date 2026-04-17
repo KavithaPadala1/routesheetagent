@@ -1,3 +1,53 @@
+# # python version 3.12.5
+
+# # pip version 26.0.1
+
+# # Database connectivity
+# pyodbc==5.3.0
+# azure-identity==1.25.1
+
+# # Azure OpenAI
+# openai>=1.0.0
+# python-dotenv>=1.0.0
+
+# # FastAPI and web framework
+# fastapi>=0.104.0
+# uvicorn>=0.24.0
+# pydantic>=2.0.0
+# flask>=3.0.0
+
+# # Utilities
+# tzdata>=2023.3
+
+# # AI Search and LangChain
+# langchain-core==0.3.75
+# langchain-community==0.3.29
+# langchain-openai==0.3.32
+# langchain-text-splitters
+# azure-search-documents==11.5.3
+
+# # HTTP requests
+# requests == 2.33.1 #2.32.5
+
+# requests-pkcs12==1.24
+# azure-ai-documentintelligence==1.0.0
+
+# # Blob logging dependencies
+# pandas==2.2.0
+# openpyxl==3.1.2
+# azure-storage-blob==12.19.0
+
+# markdown==3.5.1
+# beautifulsoup4==4.12.2
+# reportlab==4.0.7
+# python-docx==1.1.0
+# docx2pdf==0.1.8
+
+
+
+
+## updated packages on march 30 2026
+
 # python version 3.12.5
 
 # Database connectivity
@@ -5,27 +55,27 @@ pyodbc==5.3.0
 azure-identity==1.25.1
 
 # Azure OpenAI
-openai>=1.0.0
+openai>=1.3.0
 python-dotenv>=1.0.0
 
 # FastAPI and web framework
-fastapi>=0.104.0
-uvicorn>=0.24.0
-pydantic>=2.0.0
+fastapi>=0.110.0
+uvicorn>=0.27.0
+pydantic>=2.5.0
 flask>=3.0.0
 
 # Utilities
 tzdata>=2023.3
 
-# AI Search and LangChain
-langchain-core==0.3.75
+# AI Search and LangChain (CRITICAL UPDATES)
+langchain-core==0.3.81
 langchain-community==0.3.29
 langchain-openai==0.3.32
 langchain-text-splitters
 azure-search-documents==11.5.3
 
-# HTTP requests
-requests==2.32.5
+# HTTP requests (SECURITY UPDATE)
+requests==2.33.0
 requests-pkcs12==1.24
 azure-ai-documentintelligence==1.0.0
 
@@ -34,9 +84,11 @@ pandas==2.2.0
 openpyxl==3.1.2
 azure-storage-blob==12.19.0
 
-markdown==3.5.1
+# Security updates
+cryptography==46.0.5
+markdown==3.8.1
 beautifulsoup4==4.12.2
-reportlab==4.0.7
+reportlab==4.0.9
 python-docx==1.1.0
 docx2pdf==0.1.8
 

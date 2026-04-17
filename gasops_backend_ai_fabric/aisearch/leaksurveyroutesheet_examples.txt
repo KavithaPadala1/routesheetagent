@@ -1,0 +1,276 @@
+
+User : get the details of todays contractor leak survey route?
+SQL:
+SELECT YearNumber, Region, EmployeeName, ITSID, ThursdayShift, ThursdayVehicleNumber, ThursdayMuni
+FROM cedemo_ContractorsLeakSurveyEmployeeScheduleDetails
+WHERE IsDeleted = 0
+  AND ThursdayDate = '2026-04-16' -- as per todays date
+ORDER BY EmployeeName ASC;
+-- count query for contractor employees
+SELECT COUNT(DISTINCT ITSID) AS ContractorEmployeeCount
+FROM cedemo_ContractorsLeakSurveyEmployeeScheduleDetails
+WHERE IsDeleted = 0
+  AND ThursdayDate = '2026-04-16'; -- as per todays date
+
+
+User : Are there any OQ Exceptions in todays contractor leak survey route
+SQL:
+-- contractor employees with OQExceptions
+SELECT 
+    EmployeeName,
+    ITSID,
+    Region,
+    ThursdayDate,
+    ThursdayQualifiedWorkDescriptions,
+    ThursdayNOTQualifiedWorkDescriptions,
+    ThursdayMissingCoveredTaskNums
+FROM cedemo_ContractorsLeakSurveyEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayNOTQualifiedWorkDescriptions IS NOT NULL 
+        AND ThursdayNOTQualifiedWorkDescriptions != '' AND ThursdayMissingCoveredTaskNums IS NOT NULL and ThursdayMissingCoveredTaskNums != ''
+    )
+ORDER BY EmployeeName ASC;
+-- count of contractor employees with OQExceptions
+SELECT 
+    COUNT(DISTINCT ITSID) AS contractoremployeescountwithOQExceptions
+FROM cedemo_ContractorsLeakSurveyEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayNOTQualifiedWorkDescriptions IS NOT NULL 
+        AND ThursdayNOTQualifiedWorkDescriptions != '' AND ThursdayMissingCoveredTaskNums IS NOT NULL and ThursdayMissingCoveredTaskNums != ''
+    );
+
+
+User :show me qualified contractor employees in todays contractor leak survey route
+User : Are there any contractor employees with no oq exceptions in todays contractor leak survey route
+SQL:
+-- Qualified contractor employees 
+SELECT 
+    EmployeeName,
+    ITSID,
+    Region,
+    ThursdayDate,
+    ThursdayQualifiedWorkDescriptions,
+    ThursdayNOTQualifiedWorkDescriptions,
+    ThursdayMissingCoveredTaskNums
+FROM cedemo_ContractorsLeakSurveyEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayNOTQualifiedWorkDescriptions IS NULL or ThursdayNOTQualifiedWorkDescriptions = ''
+        AND ThursdayMissingCoveredTaskNums IS NULL or ThursdayMissingCoveredTaskNums = ''
+    )
+ORDER BY EmployeeName ASC;
+-- count of contractor employees with OQExceptions
+SELECT 
+    COUNT(DISTINCT ITSID) AS qualifiedcontractoremployeescount
+FROM cedemo_ContractorsLeakSurveyEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayNOTQualifiedWorkDescriptions IS NULL or ThursdayNOTQualifiedWorkDescriptions = ''
+        AND ThursdayMissingCoveredTaskNums IS NULL or ThursdayMissingCoveredTaskNums = ''
+    );
+
+
+User : Are there any DISA exceptions in todays contractor leak survey route
+SQL:
+-- contractor employees with DISA Pool exceptions
+SELECT 
+    EmployeeName,
+    ITSID,
+    Region,
+    ThursdayDate,
+    ThursdayDISAPool,
+    ThursdayShift,
+    ThursdayMuni
+FROM cedemo_ContractorsLeakSurveyEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayDISAPool IS NULL 
+        OR ThursdayDISAPool = ''
+    )
+ORDER BY EmployeeName ASC;
+-- count of contractor employees with DISA Pool exceptions
+SELECT 
+    COUNT(DISTINCT ITSID) AS contractoremployeeswithDISAPoolExceptions
+FROM cedemo_ContractorsLeakSurveyEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayDISAPool IS NULL 
+        OR ThursdayDISAPool = ''
+    );
+
+
+User : show me contractor employees with no DISA exceptions in todays contractor leak survey route
+User : Are there any contractor employees with DISA pool assigned in todays contractor leak survey route
+SQL:
+-- contractor employees with DISA Pool assigned (no exceptions)
+SELECT 
+    EmployeeName,
+    ITSID,
+    Region,
+    ThursdayDate,
+    ThursdayDISAPool,
+    ThursdayShift,
+    ThursdayMuni
+FROM cedemo_ContractorsLeakSurveyEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayDISAPool IS NOT NULL 
+        AND ThursdayDISAPool != ''
+    )
+ORDER BY EmployeeName ASC;
+-- count of contractor employees with DISA Pool assigned
+SELECT 
+    COUNT(DISTINCT ITSID) AS contractoremployeeswithDISAPoolAssigned
+FROM cedemo_ContractorsLeakSurveyEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayDISAPool IS NOT NULL 
+        AND ThursdayDISAPool != ''
+    );
+
+
+User : summarise todays contractor leak survey route
+User : tell me about todays contractor leak survey route
+SQL:
+-- Overall Employee Summary with Key Details
+SELECT 
+    Region,
+    EmployeeName,
+    ITSID,
+    ThursdayShift,
+    ThursdayVehicleNumber,
+    ThursdayNotes,ThursdayMuni
+FROM cedemo_ContractorsLeakSurveyEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+ORDER BY Region, EmployeeName ASC;
+-- Total Employee Count
+SELECT 
+    COUNT(DISTINCT ITSID) AS TotalContractorEmployees
+FROM cedemo_ContractorsLeakSurveyEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0;
+-- OQ Exceptions
+SELECT 
+    EmployeeName,
+    ITSID,
+    Region,
+    ThursdayNOTQualifiedWorkDescriptions,
+    ThursdayMissingCoveredTaskNums
+FROM cedemo_ContractorsLeakSurveyEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayNOTQualifiedWorkDescriptions IS NOT NULL 
+        AND ThursdayNOTQualifiedWorkDescriptions != ''
+        AND ThursdayMissingCoveredTaskNums IS NOT NULL 
+        AND ThursdayMissingCoveredTaskNums != ''
+    )
+ORDER BY EmployeeName ASC;
+-- OQ Exceptions Count
+SELECT 
+    COUNT(DISTINCT ITSID) AS EmployeesWithOQExceptions
+FROM cedemo_ContractorsLeakSurveyEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayNOTQualifiedWorkDescriptions IS NOT NULL 
+        AND ThursdayNOTQualifiedWorkDescriptions != ''
+        AND ThursdayMissingCoveredTaskNums IS NOT NULL 
+        AND ThursdayMissingCoveredTaskNums != ''
+    );
+-- DISA Pool Exceptions
+SELECT 
+    EmployeeName,
+    ITSID,
+    Region,
+    ThursdayShift,
+    ThursdayMuni
+FROM cedemo_ContractorsLeakSurveyEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayDISAPool IS NULL 
+        OR ThursdayDISAPool = ''
+    )
+ORDER BY EmployeeName ASC;
+-- DISA Pool Exceptions Count
+SELECT 
+    COUNT(DISTINCT ITSID) AS EmployeesWithDISAExceptions
+FROM cedemo_ContractorsLeakSurveyEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayDISAPool IS NULL 
+        OR ThursdayDISAPool = ''
+    );
+
+User : show me this week shift details for Barnett Robin in company leak survey
+SQL:
+SELECT EmployeeName, ITSID, Region, YearNumber, WeekNumber, SundayShift, MondayShift, TuesdayShift, WednesdayShift, ThursdayShift, FridayShift, SaturdayShift
+FROM CEDEMO_CompanyLeakSurveyEmployeeScheduleDetails
+WHERE IsDeleted = 0
+  AND EmployeeName LIKE '%Barnett Robin%'
+  AND YearNumber = '2026'
+  AND WeekNumber = DATEPART(WEEK, GETDATE())
+ORDER BY EmployeeName ASC;
+SELECT COUNT(DISTINCT ITSID) AS EmployeeCount
+FROM CEDEMO_CompanyLeakSurveyEmployeeScheduleDetails
+WHERE IsDeleted = 0
+  AND EmployeeName LIKE '%Barnett Robin%'
+  AND YearNumber = '2026'
+  AND WeekNumber = DATEPART(WEEK, GETDATE());
+
+User : what about the qualification and DISA for Barnett Robin in company leak survey
+SQL:
+SELECT EmployeeName, ITSID, Region, ThursdayDate, ThursdayQualifiedWorkDescriptions, ThursdayNOTQualifiedWorkDescriptions, ThursdayMissingCoveredTaskNums, ThursdayDISAPool
+FROM CEDEMO_CompanyLeakSurveyEmployeeScheduleDetails
+WHERE IsDeleted = 0
+  AND YearNumber = '2026'
+  AND EmployeeName LIKE '%Barnett Robin%'
+  AND ThursdayDate = '2026-04-16'
+ORDER BY EmployeeName ASC;
+SELECT COUNT(DISTINCT EmployeeName) AS EmployeeCount
+FROM CEDEMO_CompanyLeakSurveyEmployeeScheduleDetails
+WHERE IsDeleted = 0
+  AND YearNumber = '2026'
+  AND EmployeeName LIKE '%Barnett Robin%'
+  AND ThursdayDate = '2026-04-16';

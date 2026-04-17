@@ -1,0 +1,299 @@
+User : get the details of todays contractor SLI route?
+SQL:
+SELECT YearNumber, Region, EmployeeName, ITSID, ThursdayShift, ThursdayNotes
+FROM cedemo_ContractorsSLIEmployeeScheduleDetails
+WHERE IsDeleted = 0
+  AND ThursdayDate = '2026-04-16' -- as per todays date
+ORDER BY EmployeeName ASC;
+-- count query for contractor employees
+SELECT COUNT(DISTINCT ITSID) AS ContractorEmployeeCount
+FROM cedemo_ContractorsSLIEmployeeScheduleDetails
+WHERE IsDeleted = 0
+  AND ThursdayDate = '2026-04-16'; -- as per todays date
+
+
+User : Are there any OQ Exceptions in todays contractor SLI route
+SQL:
+-- contractor employees with OQExceptions
+SELECT 
+    EmployeeName,
+    ITSID,
+    Region,
+    ThursdayDate,
+    ThursdayQualifiedWorkActivityFunctions,
+    ThursdayNOTQualifiedWorkActivityFunctions,
+    ThursdayMissingCoveredTaskNums
+FROM cedemo_ContractorsSLIEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayNOTQualifiedWorkActivityFunctions IS NOT NULL 
+        AND ThursdayNOTQualifiedWorkActivityFunctions != '' AND ThursdayMissingCoveredTaskNums IS NOT NULL and ThursdayMissingCoveredTaskNums != ''
+    )
+ORDER BY EmployeeName ASC;
+-- count of contractor employees with OQExceptions
+SELECT 
+    COUNT(DISTINCT ITSID) AS contractoremployeescountwithOQExceptions
+FROM cedemo_ContractorsSLIEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayNOTQualifiedWorkActivityFunctions IS NOT NULL 
+        AND ThursdayNOTQualifiedWorkActivityFunctions != '' AND ThursdayMissingCoveredTaskNums IS NOT NULL and ThursdayMissingCoveredTaskNums != ''
+    );
+
+
+User :show me qualified contractor employees in todays contractor SLI route
+User : Are there any contractor employees with no oq exceptions in todays contractor SLI route
+SQL:
+-- Qualified contractor employees 
+SELECT 
+    EmployeeName,
+    ITSID,
+    Region,
+    ThursdayDate,
+    ThursdayQualifiedWorkActivityFunctions,
+    ThursdayNOTQualifiedWorkActivityFunctions,
+    ThursdayMissingCoveredTaskNums
+FROM cedemo_ContractorsSLIEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayNOTQualifiedWorkActivityFunctions IS NULL or ThursdayNOTQualifiedWorkActivityFunctions = ''
+        AND ThursdayMissingCoveredTaskNums IS NULL or ThursdayMissingCoveredTaskNums = ''
+    )
+ORDER BY EmployeeName ASC;
+-- count of qualified contractor employees
+SELECT 
+    COUNT(DISTINCT ITSID) AS qualifiedcontractoremployeescount
+FROM cedemo_ContractorsSLIEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayNOTQualifiedWorkActivityFunctions IS NULL or ThursdayNOTQualifiedWorkActivityFunctions = ''
+        AND ThursdayMissingCoveredTaskNums IS NULL or ThursdayMissingCoveredTaskNums = ''
+    );
+
+
+User : Are there any DISA exceptions in todays contractor SLI route
+SQL:
+-- contractor employees with DISA Pool exceptions
+SELECT 
+    EmployeeName,
+    ITSID,
+    Region,
+    ThursdayDate,
+    ThursdayDISAPool,
+    ThursdayShift,
+    ThursdayNotes
+FROM cedemo_ContractorsSLIEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayDISAPool IS NULL 
+        OR ThursdayDISAPool = ''
+    )
+ORDER BY EmployeeName ASC;
+-- count of contractor employees with DISA Pool exceptions
+SELECT 
+    COUNT(DISTINCT ITSID) AS contractoremployeeswithDISAPoolExceptions
+FROM cedemo_ContractorsSLIEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayDISAPool IS NULL 
+        OR ThursdayDISAPool = ''
+    );
+
+
+User : show me contractor employees with no DISA exceptions in todays contractor SLI route
+User : Are there any contractor employees with DISA pool assigned in todays contractor SLI route
+SQL:
+-- contractor employees with DISA Pool assigned (no exceptions)
+SELECT 
+    EmployeeName,
+    ITSID,
+    Region,
+    ThursdayDate,
+    ThursdayDISAPool,
+    ThursdayShift,
+    ThursdayNotes
+FROM cedemo_ContractorsSLIEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayDISAPool IS NOT NULL 
+        AND ThursdayDISAPool != ''
+    )
+ORDER BY EmployeeName ASC;
+-- count of contractor employees with DISA Pool assigned
+SELECT 
+    COUNT(DISTINCT ITSID) AS contractoremployeeswithDISAPoolAssigned
+FROM cedemo_ContractorsSLIEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayDISAPool IS NOT NULL 
+        AND ThursdayDISAPool != ''
+    );
+
+
+User : summarise todays contractor SLI route
+User : tell me about todays contractor SLI route
+SQL:
+-- Overall Employee Summary with Key Details
+SELECT 
+    Region,
+    EmployeeName,
+    ITSID,
+    ThursdayShift,
+    ThursdayNotes,
+    ThursdayQualifiedWorkActivityFunctions
+FROM cedemo_ContractorsSLIEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+ORDER BY Region, EmployeeName ASC;
+-- Total Employee Count
+SELECT 
+    COUNT(DISTINCT ITSID) AS TotalContractorEmployees
+FROM cedemo_ContractorsSLIEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0;
+-- OQ Exceptions
+SELECT 
+    EmployeeName,
+    ITSID,
+    Region,
+    ThursdayNOTQualifiedWorkActivityFunctions,
+    ThursdayMissingCoveredTaskNums
+FROM cedemo_ContractorsSLIEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayNOTQualifiedWorkActivityFunctions IS NOT NULL 
+        AND ThursdayNOTQualifiedWorkActivityFunctions != ''
+        AND ThursdayMissingCoveredTaskNums IS NOT NULL 
+        AND ThursdayMissingCoveredTaskNums != ''
+    )
+ORDER BY EmployeeName ASC;
+-- OQ Exceptions Count
+SELECT 
+    COUNT(DISTINCT ITSID) AS EmployeesWithOQExceptions
+FROM cedemo_ContractorsSLIEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayNOTQualifiedWorkActivityFunctions IS NOT NULL 
+        AND ThursdayNOTQualifiedWorkActivityFunctions != ''
+        AND ThursdayMissingCoveredTaskNums IS NOT NULL 
+        AND ThursdayMissingCoveredTaskNums != ''
+    );
+-- DISA Pool Exceptions
+SELECT 
+    EmployeeName,
+    ITSID,
+    Region,
+    ThursdayShift,
+    ThursdayNotes
+FROM cedemo_ContractorsSLIEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayDISAPool IS NULL 
+        OR ThursdayDISAPool = ''
+    )
+ORDER BY EmployeeName ASC;
+-- DISA Pool Exceptions Count
+SELECT 
+    COUNT(DISTINCT ITSID) AS EmployeesWithDISAExceptions
+FROM cedemo_ContractorsSLIEmployeeScheduleDetails
+WHERE 
+    YearNumber = '2026'
+    AND ThursdayDate = '2026-04-16'
+    AND IsDeleted = 0
+    AND (
+        ThursdayDISAPool IS NULL 
+        OR ThursdayDISAPool = ''
+    );
+
+User : show me this week shift details for John Smith in company SLI
+SQL:
+SELECT EmployeeName, ITSID, Region, YearNumber, WeekNumber, SundayShift, MondayShift, TuesdayShift, WednesdayShift, ThursdayShift, FridayShift, SaturdayShift
+FROM cedemo_CompanySLIEmployeeScheduleDetails
+WHERE IsDeleted = 0
+  AND EmployeeName LIKE '%John Smith%'
+  AND YearNumber = '2026'
+  AND WeekNumber = DATEPART(WEEK, GETDATE())
+ORDER BY EmployeeName ASC;
+SELECT COUNT(DISTINCT ITSID) AS EmployeeCount
+FROM cedemo_CompanySLIEmployeeScheduleDetails
+WHERE IsDeleted = 0
+  AND EmployeeName LIKE '%John Smith%'
+  AND YearNumber = '2026'
+  AND WeekNumber = DATEPART(WEEK, GETDATE());
+
+User : what about the qualification and DISA for John Smith in company SLI
+SQL:
+SELECT EmployeeName, ITSID, Region, ThursdayDate, ThursdayQualifiedWorkActivityFunctions, ThursdayNOTQualifiedWorkActivityFunctions, ThursdayMissingCoveredTaskNums, ThursdayDISAPool
+FROM cedemo_CompanySLIEmployeeScheduleDetails
+WHERE IsDeleted = 0
+  AND YearNumber = '2026'
+  AND EmployeeName LIKE '%John Smith%'
+  AND ThursdayDate = '2026-04-16'
+ORDER BY EmployeeName ASC;
+SELECT COUNT(DISTINCT EmployeeName) AS EmployeeCount
+FROM cedemo_CompanySLIEmployeeScheduleDetails
+WHERE IsDeleted = 0
+  AND YearNumber = '2026'
+  AND EmployeeName LIKE '%John Smith%'
+  AND ThursdayDate = '2026-04-16';
+
+User : get details for todays company SLI route
+SQL:
+SELECT YearNumber, Region, EmployeeName, ITSID, ThursdayShift, ThursdayNotes
+FROM cedemo_CompanySLIEmployeeScheduleDetails
+WHERE IsDeleted = 0
+  AND ThursdayDate = '2026-04-16'
+ORDER BY EmployeeName ASC;
+SELECT COUNT(DISTINCT ITSID) AS CompanyEmployeeCount
+FROM cedemo_CompanySLIEmployeeScheduleDetails
+WHERE IsDeleted = 0
+  AND ThursdayDate = '2026-04-16';
+
+User : show me contractor MLR SLI employees for today
+SQL:
+SELECT YearNumber, Region, EmployeeName, ITSID, ThursdayShift, ThursdayNotes, ThursdayQualifiedWorkActivityFunctions
+FROM cedemo_ContractorsMLRSLIEmployeeScheduleDetails
+WHERE IsDeleted = 0
+  AND ThursdayDate = '2026-04-16'
+ORDER BY EmployeeName ASC;
+SELECT COUNT(DISTINCT ITSID) AS ContractorMLREmployeeCount
+FROM cedemo_ContractorsMLRSLIEmployeeScheduleDetails
+WHERE IsDeleted = 0
+  AND ThursdayDate = '2026-04-16';

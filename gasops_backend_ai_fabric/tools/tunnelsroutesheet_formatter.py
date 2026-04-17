@@ -1,9 +1,11 @@
-# routesheet_formatter.py - Formats SQL query results for gas operations routesheet agent
+# tunnelsroutesheet_formatter.py - Formats SQL query results for tunnels routesheet agent
 
 import json
 from config.azure_client import get_azure_chat_openai
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo 
 
-async def format_routesheet_results(user_query: str, sql_results: list) -> str:
+async def format_tunnelsroutesheet_results(user_query: str, sql_results: list) -> str:
     """
     Format SQL query results into a user-friendly response.
     
@@ -14,6 +16,13 @@ async def format_routesheet_results(user_query: str, sql_results: list) -> str:
     Returns:
         str: Formatted response for the user
     """
+    # Calculate current time INSIDE the function so it's fresh on each request
+    eastern = ZoneInfo("America/New_York")  
+    now = datetime.now(ZoneInfo("UTC")).astimezone(eastern)  
+    # time = now.strftime("%Y-%m-%d %H:%M:%S")
+    current_date = now.strftime('%B %d, %Y')
+    current_year = now.year
+    
     try:
         # Get Azure OpenAI client
         azure_client, azureopenai = get_azure_chat_openai()
@@ -23,12 +32,16 @@ async def format_routesheet_results(user_query: str, sql_results: list) -> str:
 
         # Create formatting prompt
         formatting_prompt = f"""
-You are a response formatter for a Routesheet Insights AI assistant.
+You are a response formatter for a Tunnels Routesheet Insights AI assistant.
 
 User Question: {user_query}
 
 SQL Query Results:
 {json.dumps(sql_results, indent=2, default=str)}
+
+## For your Context :
+Today's date is {current_date}
+Current year is {current_year}
 
 General Guidelines:
 - Understand the user's question and the SQL results thoroughly before formatting the response.
@@ -81,71 +94,7 @@ What NOT to do:
    - If user explicitly requests a table → Always use a Markdown table.
 
 # Quick formatting patterns:
- - Are there any OQ Exceptions in gas ops bronx route?
- <if results exists for both District and Capital category always show the details in serperate section along with the count in a markdown table>
- TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| OQ Exception Crew |
-<show all rows in the result>
 
-- DISA Exception details
-always show for each category seperately along with the count in a markdown table if results exists for both District and Capital category
- TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| DISA Exception Crew |
- <show all rows in the result>
-
-- Show me details of night shift in gas ops routesheet this year?
-For <category1> 
-|TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| RouteSheetDate | 
-<show all rows in the result>
-
-For <category1> 
-|TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| RouteSheetDate |
-<show all rows in the result>
-
-- For summary or tell me about gas operations routesheet? like : Summarise gas ops routesheet for feb 5th?
-follow this pattern only :
-Here is the summary of gas ops routesheet for <RouteSheetDate if asked for specific date> across all regions <region if asked for specific region>:
-#Overview:
-For category1:
- - There are n tickets in total.
- - <SupervisorName1> is handling x tickets for <WorkDescription1>, <WorkDescription2> in <Region1 if multiple> .
- - <SupervisorName2> is handling y tickets for <WorkDescription3>, <WorkDescription4> in <Region2 if multiple>.
-For category2:
- - There are n tickets in total.
- - <SupervisorName1> is handling x tickets for <WorkDescription1>, <WorkDescription2> in <Region1 if multiple> .
- - <SupervisorName2> is handling y tickets for <WorkDescription3>, <WorkDescription4> in <Region2 if multiple>.
-#OQ Exceptions:
- - There are x tickets in category1.
- - There are y tickets in category2.
-OQ Exceptions details:
-For category1:
- TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| OQ Exception Crew |
- **<show all rows in the result even it if is 25 rows>**
-For category2:
- TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| OQ Exception Crew |
- <show all rows in the result>
-
-#DISA Exceptions:
- - There are x tickets in categoey1.
- - There are y tickets in category2.
-DISA Exceptions details:
-For category1:
- TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| DISA Exception Crew |
- <show all rows in the result>
-For category2:
- TicketNumber | WorkDescription | WorkLocation |Region (if multiple)| DISA Exception Crew |
- <show all rows in the result>
-
-#Employees on Leave:
- - There are x employees on leave in category1.Here are the details:
- |EmployeeName| ITSID | ReasonForAbsence | Comments |
- <show all rows in the result>
- 
- - There are y employees on leave in category2.Here are the details:
-  |EmployeeName| ITSID | ReasonForAbsence | Comments |
-  <show all rows in the result>
-
-if only 1 count then you can say There is 1 instead of There are 1.
-Note : if any of the above sections does not have data then simple say "There are no OQ Exceptions in category1" or "There are no employees on leave in category2" instead of showing empty table or There are no total ticket count provided for District category in this dataset. 
- 
 """
         
         # Call LLM to format the results
@@ -159,13 +108,13 @@ Note : if any of the above sections does not have data then simple say "There ar
         )
         
         formatted_response = response.choices[0].message.content
-        print(f"[routesheet_formatter] Response formatted successfully")
+        print(f"[tunnelsroutesheet_formatter] Response formatted successfully")
         
         return formatted_response
         
     except Exception as e:
         error_message = f"Error formatting results: {str(e)}"
-        print(f"[routesheet_formatter] {error_message}")
+        print(f"[tunnelsroutesheet_formatter] {error_message}")
         import traceback
         traceback.print_exc()
         # Return a simple fallback format

@@ -24,7 +24,7 @@ azure_embedding_deployment = os.getenv("AZURE_SEARCH_DEPLOYMENT")   # Embedding 
 vector_store_address = os.getenv("AZURE_SEARCH_ENDPOINT")
 vector_store_password = os.getenv("AZURE_SEARCH_KEY")
 
-index_name = "gasopsroutesheetindex"  # Azure Search index name
+index_name = "tunnelsroutesheetindex"  # Azure Search index name
 
 
 # Embeddings: use Azure OpenAI endpoint/key/deployment for embeddings
@@ -35,9 +35,123 @@ embeddings = AzureOpenAIEmbeddings(
     api_key=azure_embedding_api_key,
 )
 
-
+# gas operations routesheet specific AI Search function
 def routesheet_search(user_text: str):
     index_name = "gasopsroutesheetindex"
+
+    vector_store = AzureSearch(
+        azure_search_endpoint=vector_store_address,
+        azure_search_key=vector_store_password,
+        index_name=index_name,
+        embedding_function=embeddings.embed_query,
+        additional_search_client_options={"retry_total": 4},
+    )
+
+    results = vector_store.similarity_search(query=user_text, k=3, search_type="similarity")
+    return results
+
+# contractor routesheet specific AI Search function
+
+def contractor_routesheet_search(user_text: str):
+    index_name = "contractorroutesheetindex"
+
+    vector_store = AzureSearch(
+        azure_search_endpoint=vector_store_address,
+        azure_search_key=vector_store_password,
+        index_name=index_name,
+        embedding_function=embeddings.embed_query,
+        additional_search_client_options={"retry_total": 4},
+    )
+
+    results = vector_store.similarity_search(query=user_text, k=3, search_type="similarity")
+    return results
+
+
+# tunnels routesheet specific AI Search function
+
+def tunnels_routesheet_search(user_text: str):
+    index_name = "tunnelsroutesheetindex"
+
+    vector_store = AzureSearch(
+        azure_search_endpoint=vector_store_address,
+        azure_search_key=vector_store_password,
+        index_name=index_name,
+        embedding_function=embeddings.embed_query,
+        additional_search_client_options={"retry_total": 4},
+    )
+
+    results = vector_store.similarity_search(query=user_text, k=3, search_type="similarity")
+    return results
+
+
+# corrosion routesheet specific AI Search function
+
+def corrosion_routesheet_search(user_text: str):
+    index_name = "corrosionroutesheetindex"
+
+    vector_store = AzureSearch(
+        azure_search_endpoint=vector_store_address,
+        azure_search_key=vector_store_password,
+        index_name=index_name,
+        embedding_function=embeddings.embed_query,
+        additional_search_client_options={"retry_total": 4},
+    )
+
+    results = vector_store.similarity_search(query=user_text, k=3, search_type="similarity")
+    return results
+
+# leaksurvey routesheet specific AI Search function
+
+def leaksurvey_routesheet_search(user_text: str):
+    index_name = "leaksurveyroutesheetindex"
+
+    vector_store = AzureSearch(
+        azure_search_endpoint=vector_store_address,
+        azure_search_key=vector_store_password,
+        index_name=index_name,
+        embedding_function=embeddings.embed_query,
+        additional_search_client_options={"retry_total": 4},
+    )
+
+    results = vector_store.similarity_search(query=user_text, k=3, search_type="similarity")
+    return results
+
+# sli routesheet specific AI Search function
+
+def sli_routesheet_search(user_text: str):
+    index_name = "sliroutesheetindex"
+
+    vector_store = AzureSearch(
+        azure_search_endpoint=vector_store_address,
+        azure_search_key=vector_store_password,
+        index_name=index_name,
+        embedding_function=embeddings.embed_query,
+        additional_search_client_options={"retry_total": 4},
+    )
+
+    results = vector_store.similarity_search(query=user_text, k=3, search_type="similarity")
+    return results
+
+# gds steady routesheet specific AI Search function
+
+def gds_steady_routesheet_search(user_text: str):
+    index_name = "gdssteadyroutesheetindex"
+
+    vector_store = AzureSearch(
+        azure_search_endpoint=vector_store_address,
+        azure_search_key=vector_store_password,
+        index_name=index_name,
+        embedding_function=embeddings.embed_query,
+        additional_search_client_options={"retry_total": 4},
+    )
+
+    results = vector_store.similarity_search(query=user_text, k=3, search_type="similarity")
+    return results
+
+# gds rotating routesheet specific AI Search function
+
+def gds_rotating_routesheet_search(user_text: str):
+    index_name = "gdsrotatingroutesheetindex"
 
     vector_store = AzureSearch(
         azure_search_endpoint=vector_store_address,

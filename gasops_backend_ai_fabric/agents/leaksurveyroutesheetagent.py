@@ -1,18 +1,19 @@
 
-# contractorroutesheetagent.py - Handles gas operations routesheet-related queries by generating and executing SQL
+# leaksurveyroutesheet.py - Handles leak survey routesheet-related queries by generating and executing SQL
 
 import json
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from config.azure_client import get_azure_chat_openai
-from prompts.contractorroutesheetprompt import get_contractorroutesheet_sql_prompt
+from prompts.leaksurveyroutesheetprompt import get_leaksurveyroutesheet_sql_prompt
+
 from tools.sql_executor import execute_sql_query_with_retry, get_sql_tool_definition
 
-from tools.contractorroutesheet_formatter import format_contractorroutesheet_results
-from aisearch.ai_search import contractor_routesheet_search  # Import AI Search
+from tools.leaksurveyroutesheet_formatter import format_leaksurveyroutesheet_results
+from aisearch.ai_search import leaksurvey_routesheet_search  # Import AI Search
 
 
-async def handle_contractorroutesheet(query: str, auth_token: str = None):
+async def handle_leaksurveyroutesheet(query: str, auth_token: str = None):
     """
     Routesheet agent that generates SQL queries and formats results.
     
@@ -39,12 +40,12 @@ async def handle_contractorroutesheet(query: str, auth_token: str = None):
         current_year = now.year
         current_date = now.strftime('%B %d, %Y')
 
-        print(f"[contractorroutesheetagent] Processing query: {query}")
-        print(f"[contractorroutesheetagent] Current year: {current_year}, Current date: {current_date}")
+        print(f"[leaksurveyroutesheetagent] Processing query: {query}")
+        print(f"[leaksurveyroutesheetagent] Current year: {current_year}, Current date: {current_date}")
 
         # Fetch relevant examples from AI Search
-        print("[contractorroutesheetagent] Fetching relevant examples from AI Search...")
-        search_results = contractor_routesheet_search(query)
+        print("[leaksurveyroutesheetagent] Fetching relevant examples from AI Search...")
+        search_results = leaksurvey_routesheet_search(query)
 
         # Extract example content from search results
         examples_context = ""
@@ -52,14 +53,14 @@ async def handle_contractorroutesheet(query: str, auth_token: str = None):
             examples_context = "\n\n## Similar Examples from Previous Queries:\n"
             for idx, result in enumerate(search_results[:3], 1):  # Top 3 results
                 examples_context += f"\nExample {idx}:\n{result.page_content}\n"
-            print(f"[contractorroutesheetagent] Found {len(search_results)} relevant examples")
-            print(f"[contractorroutesheetagent] Examples context:\n{examples_context}")
+            print(f"[leaksurveyroutesheetagent] Found {len(search_results)} relevant examples")
+            print(f"[leaksurveyroutesheetagent] Examples context:\n{examples_context}")
         else:
-            print("[contractorroutesheetagent] No relevant examples found in AI Search")
+            print("[leaksurveyroutesheetagent] No relevant examples found in AI Search")
 
 
         # Get SQL generation prompt (simplified - no formatting rules)
-        system_prompt = get_contractorroutesheet_sql_prompt(query, current_year)  
+        system_prompt = get_leaksurveyroutesheet_sql_prompt(query, current_year)  
         
         # # Append AI Search examples to the prompt
         # if examples_context:
@@ -74,7 +75,7 @@ async def handle_contractorroutesheet(query: str, auth_token: str = None):
             {"role": "user", "content": query}
         ]
         
-        print("[contractor routesheetagent] Calling LLM to generate SQL...")
+        print("[leaksurveyroutesheetagent] Calling LLM to generate SQL...")
         response = azure_client.chat.completions.create(
             model=azureopenai,
             messages=messages,
@@ -88,7 +89,7 @@ async def handle_contractorroutesheet(query: str, auth_token: str = None):
         # If no tool call, return direct response (e.g., greetings)
         if not tool_calls:
             direct_answer = response_message.content
-            print(f"[contractorroutesheetagent] No tool call. Direct response from LLM.")
+            print(f"[leaksurveyroutesheetagent] No tool call. Direct response from LLM.")
             return {"answer": direct_answer}
         
         # Execute SQL query
@@ -103,11 +104,11 @@ async def handle_contractorroutesheet(query: str, auth_token: str = None):
                 try:
                     # sql_results = execute_sql_query(sql_query)
                     sql_results =  execute_sql_query_with_retry(sql_query)
-                    print(f"[contractorroutesheetagent] Query returned {len(sql_results) if sql_results else 0} rows")
+                    print(f"[leaksurveyroutesheetagent] Query returned {len(sql_results) if sql_results else 0} rows")
 
                     # Format results using dedicated formatter
-                    print("[contractorroutesheetagent] Calling formatter to create user response...")
-                    formatted_answer = await format_contractorroutesheet_results(query, sql_results)
+                    print("[leaksurveyroutesheetagent] Calling formatter to create user response...")
+                    formatted_answer = await format_leaksurveyroutesheet_results(query, sql_results)
 
                     # return {"answer": formatted_answer}
                     return {"answer": formatted_answer,
@@ -116,7 +117,7 @@ async def handle_contractorroutesheet(query: str, auth_token: str = None):
                     
                 except Exception as e:
                     error_msg = f"SQL execution error: {str(e)}"
-                    print(f"[contractor routesheetagent] {error_msg}")
+                    print(f"[leaksurveyroutesheetagent] {error_msg}")
 
                     # Return friendly error message
                     return {"answer": "I apologize, but I'm having trouble retrieving that information right now. Could you please rephrase your question or try again in a moment?"}
@@ -124,8 +125,8 @@ async def handle_contractorroutesheet(query: str, auth_token: str = None):
         return {"answer": "I couldn't process your request. Please try again."}
         
     except Exception as e:
-        error_message = f"Error in contractorroutesheetagent: {str(e)}"
-        print(f"[contractorroutesheetagent] {error_message}")
+        error_message = f"Error in leaksurveyroutesheetagent: {str(e)}"
+        print(f"[leaksurveyroutesheetagent] {error_message}")
         import traceback
         traceback.print_exc()
         return {"answer": "I encountered an error processing your query. Please try rephrasing your question or contact support if the issue persists."}

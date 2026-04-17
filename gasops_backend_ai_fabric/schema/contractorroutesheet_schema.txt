@@ -31,6 +31,7 @@ Stores ticket-level information for contractor route sheets, including work orde
 - HoldPointTime (varchar): Time associated with the hold point.
 - FusingPeerNeed (varchar): Indicates whether a fusing peer is required. Has Yes, No values
 - FusingPeerNeedTime (varchar): Time associated with the fusing peer requirement.
+- FusingPeerNeedCount (varchar): Number of fusing peers required.
 - EmployeeIDs (varchar): List of employee IDs assigned to the job. Has comma sperated values
 - ITSIDEmployeeNames (varchar): ITS IDs of employees assigned to the job. Has comma sperated values
 - EmployeeNames (varchar): Names of employees assigned to the job. Has comma seperated values
@@ -48,22 +49,21 @@ Stores ticket-level information for contractor route sheets, including work orde
 - JobOwnerID (bigint): Identifier of the job owner.
 - JobOwnerName (varchar): Name of the job owner.
 - GasOutAddresses (varchar): Addresses where gas outage is required.
-- SpecialCondition (varchar): Special conditions associated with the job. It has values New Job;Contingency Job, New Job. semicolon sperated.
+- SpecialCondition (varchar): Special conditions associated with the job. It has values New Job;Contingency Job, New Job, Night Job,New Job;Night Job,Underground Electric Job.It can have ; semicolon sperated values.Use this to know Night Job
 - FlaggersPolice (varchar): Indicates whether flaggers or police are required. Has these values NULL,Both,Police,None
 - StateRoad (varchar): Indicates whether the job is on a state road. Has Yes, No values
 - PermitNumber (varchar): Permit number associated with the job.
 - PermitExpiry (datetime2): Expiration date of the permit.
 - PONumber (varchar): Purchase order number associated with the job.
 - LayoutNumber (varchar): Layout number for the job.
-- FusingPeerNeedCount (varchar): Number of fusing peers required.
 - AssignedSecondInspectorVendorCode (varchar): Vendor code of the assigned second inspector.
 - SecondInspectorAssignedByCrew (varchar): Crew responsible for assigning the second inspector.
 - SecondInspectorAssignedByID (varchar): Identifier of the person who assigned the second inspector.
 - SecondInspectorAssignedByName (varchar): Name of the person who assigned the second inspector.
-- SecondInspectorCrew (varchar): Crew assigned as second inspector.
+- SecondInspectorCrew (varchar): Crew assigned as second inspector.Contains values as 'Contractor' or NULL
 - SecondInspectorVendorCode (varchar): Vendor code of the second inspector.
 - SecondInspectorEmployeeMasterID (varchar): Employee master ID of the second inspector.
-- SecondInspectorNameITSID (varchar): ITS ID of the second inspector.
+- SecondInspectorNameITSID (varchar): Name and ITSID of the second inspector.
 - SecondInspectorAddUpdateByID (varchar): Identifier of the person who added or updated the second inspector.
 - SecondInspectorAddUpdateByName (varchar): Name of the person who added or updated the second inspector.
 - SecondInspectorQualified (varchar): Indicates whether the second inspector is qualified. Has Yes, No, NULL.
@@ -71,7 +71,6 @@ Stores ticket-level information for contractor route sheets, including work orde
 - SecondInspectorCancelled (bit): Indicates whether the second inspector assignment was cancelled. Has 1,0,NULL.
 - SecondInspectorCancelledDate (datetime2): Date when the second inspector assignment was cancelled.
 - SecondInspectorNotes (varchar): Additional notes related to the second inspector.
-
 
 
 # TABLE : cedemo_ContractorRSAssignedEmployeeDetails
@@ -88,15 +87,15 @@ Stores employee-level assignment details for contractor route sheet tickets, inc
 - PhoneRadioNumber (varchar): Phone or radio number assigned to the employee.
 - ContractorRouteSheetWorkDescriptionID (bigint): Identifier linking to the contractor work description.
 - WorkDescription (varchar): Description of the work assigned to the employee.
-- Qualified (varchar): Indicates whether the employee is qualified for the assigned work.
+- Qualified (varchar): Indicates whether the employee is qualified for the assigned work.It has 'Yes', 'No' values.
 - QualificationValidatedDate (datetime2): Date when the employee’s qualification was validated.
 - IsDeleted (bit): Indicates whether the employee assignment record is deleted. Always consider IsDeleted=0
 - JobRole (varchar): Job role assigned to the employee for the route sheet ticket.
-- EmployeeDISAPool (varchar): Indicates whether the employee belongs to the DISA pool.
+- EmployeeDISAPool (varchar): Indicates whether the employee belongs to the DISA pool.It has values like 'PHMSA', 'FMCSA', Null or ' ' blank.
 - MissingCoveredTasks (varchar): List of required tasks that are missing or not covered by the employee.
 
 
-# TABLE: cedemo_ContractorMaster
+# TABLE: CEDEMO_ContractorMaster
 Description: Master table for Contractor names
 ## Columns:
 - ContractorName (varchar) : Contractor full name
@@ -113,4 +112,4 @@ cedemo_ContractorRouteSheetTicketDetails.VendorCode = cedemo_ContractorRSAssigne
 FILTER CONDITIONS (ALWAYS APPLY):
 - cedemo_ContractorRouteSheetTicketDetails.IsActive =1
 - cedemo_ContractorRSAssignedEmployeeDetails.IsDeleted = 0
-- cedemo_ContractorMaster.IsActive =1
+- CEDEMO_ContractorMaster.IsActive =1

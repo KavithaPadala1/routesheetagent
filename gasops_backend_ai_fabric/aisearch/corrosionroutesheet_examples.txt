@@ -1,0 +1,130 @@
+User : summarise todays corrosion routesheet
+User : tell me about todays corrosion routesheet
+SQL:
+-- Section 1 — Employee Count by Work Description (DATA)
+SELECT WorkDescription, COUNT(DISTINCT ITSID) AS EmployeeCount
+FROM cedemo_CorrosionRSAssignedEmployeeDetails ae
+JOIN cedemo_CorrosionRouteSheetHeader rh ON ae.CorrosionRouteSheetID = rh.CorrosionRouteSheetID
+WHERE rh.IsActive = 1
+  AND ae.IsDeleted = 0
+  AND CAST(RouteSheetDate AS DATE) = '2026-04-15'
+GROUP BY WorkDescription
+ORDER BY EmployeeCount DESC;
+-- Section 1 — Employee Count by Work Description (COUNT)
+SELECT COUNT(DISTINCT WorkDescription) AS WorkDescriptionCount
+FROM cedemo_CorrosionRSAssignedEmployeeDetails ae
+JOIN cedemo_CorrosionRouteSheetHeader rh ON ae.CorrosionRouteSheetID = rh.CorrosionRouteSheetID
+WHERE rh.IsActive = 1
+  AND ae.IsDeleted = 0
+  AND CAST(RouteSheetDate AS DATE) = '2026-04-15';
+-- Section 2 — Route Sheet Overview (DATA)
+SELECT RouteSheetDate, RouteSheetDay, Supervisor1Name, PlannerName, SectionManagerName, RouteSheetStatus
+FROM cedemo_CorrosionRouteSheetHeader
+WHERE IsActive = 1
+  AND CAST(RouteSheetDate AS DATE) = '2026-04-15';
+-- Section 2 — Route Sheet Overview (COUNT)
+SELECT COUNT(DISTINCT CorrosionRouteSheetID) AS RouteSheetCount
+FROM cedemo_CorrosionRouteSheetHeader
+WHERE IsActive = 1
+  AND CAST(RouteSheetDate AS DATE) = '2026-04-15';
+-- Section 3 — OQ Exceptions (DATA)
+SELECT ITSID, EmployeeName, WorkLocation, Borough, WorkDescription, Qualified
+FROM cedemo_CorrosionRSAssignedEmployeeDetails ae
+JOIN cedemo_CorrosionRouteSheetHeader rh ON ae.CorrosionRouteSheetID = rh.CorrosionRouteSheetID
+WHERE rh.IsActive = 1
+  AND ae.IsDeleted = 0
+  AND Qualified = 'No'
+  AND CAST(RouteSheetDate AS DATE) = '2026-04-15'
+ORDER BY EmployeeName ASC;
+-- Section 3 — OQ Exceptions (COUNT)
+SELECT COUNT(DISTINCT ITSID) AS OQExceptionCount
+FROM cedemo_CorrosionRSAssignedEmployeeDetails ae
+JOIN cedemo_CorrosionRouteSheetHeader rh ON ae.CorrosionRouteSheetID = rh.CorrosionRouteSheetID
+WHERE rh.IsActive = 1
+  AND ae.IsDeleted = 0
+  AND Qualified = 'No'
+  AND CAST(RouteSheetDate AS DATE) = '2026-04-15';
+-- Section 4 — DISA Exceptions (DATA)
+SELECT ITSID, EmployeeName, WorkLocation, Borough, WorkDescription, EmployeeDISAPool
+FROM cedemo_CorrosionRSAssignedEmployeeDetails ae
+JOIN cedemo_CorrosionRouteSheetHeader rh ON ae.CorrosionRouteSheetID = rh.CorrosionRouteSheetID
+WHERE rh.IsActive = 1
+  AND ae.IsDeleted = 0
+  AND (EmployeeDISAPool IS NULL OR EmployeeDISAPool = '')
+  AND CAST(RouteSheetDate AS DATE) = '2026-04-15'
+ORDER BY EmployeeName ASC;
+-- Section 4 — DISA Exceptions (COUNT)
+SELECT COUNT(DISTINCT ITSID) AS DISAExceptionCount
+FROM cedemo_CorrosionRSAssignedEmployeeDetails ae
+JOIN cedemo_CorrosionRouteSheetHeader rh ON ae.CorrosionRouteSheetID = rh.CorrosionRouteSheetID
+WHERE rh.IsActive = 1
+  AND ae.IsDeleted = 0
+  AND (EmployeeDISAPool IS NULL OR EmployeeDISAPool = '')
+  AND CAST(RouteSheetDate AS DATE) = '2026-04-15';
+-- Section 5 — Employee Leave Details (DATA)
+SELECT ITSID, EmployeeName, ReasonForAbsence, Comments
+FROM cedemo_CorrosionRSLeaveEmployeeDetails le
+JOIN cedemo_CorrosionRouteSheetHeader rh ON le.CorrosionRouteSheetID = rh.CorrosionRouteSheetID
+WHERE rh.IsActive = 1
+  AND le.IsDeleted = 0
+  AND CAST(RouteSheetDate AS DATE) = '2026-04-15'
+ORDER BY EmployeeName ASC;
+-- Section 5 — Employee Leave Details (COUNT)
+SELECT COUNT(DISTINCT ITSID) AS LeaveEmployeeCount
+FROM cedemo_CorrosionRSLeaveEmployeeDetails le
+JOIN cedemo_CorrosionRouteSheetHeader rh ON le.CorrosionRouteSheetID = rh.CorrosionRouteSheetID
+WHERE rh.IsActive = 1
+  AND le.IsDeleted = 0
+  AND CAST(RouteSheetDate AS DATE) = '2026-04-15';
+
+User : show me routesheets by borough in corrosion routesheet
+SQL:
+ SELECT
+    CASE
+        WHEN ae.Borough = 'X' THEN 'Bronx'
+        WHEN ae.Borough = 'M' THEN 'Manhattan'
+        WHEN ae.Borough = 'Q' THEN 'Queens'
+        WHEN ae.Borough = 'W' THEN 'Westchester'
+        WHEN ae.Borough = 'BK (Brooklyn)' THEN 'Brooklyn'
+        WHEN ae.Borough = 'S (Staten Island)' THEN 'Staten Island'
+        ELSE ae.Borough
+    END AS Borough,
+    h.RouteSheetDate,
+    h.RouteSheetDay,
+    h.RouteSheetStatus,
+    h.Supervisor1Name,
+    h.PlannerName
+FROM cedemo_CorrosionRouteSheetHeader h
+JOIN cedemo_CorrosionRSAssignedEmployeeDetails ae
+    ON h.CorrosionRouteSheetID = ae.CorrosionRouteSheetID
+WHERE h.IsActive = 1
+  AND ae.IsDeleted = 0
+  AND YEAR(h.RouteSheetDate) = 2026
+ORDER BY Borough ASC, h.RouteSheetDate DESC;
+SELECT
+    CASE
+        WHEN ae.Borough = 'X' THEN 'Bronx'
+        WHEN ae.Borough = 'M' THEN 'Manhattan'
+        WHEN ae.Borough = 'Q' THEN 'Queens'
+        WHEN ae.Borough = 'W' THEN 'Westchester'
+        WHEN ae.Borough = 'BK (Brooklyn)' THEN 'Brooklyn'
+        WHEN ae.Borough = 'S (Staten Island)' THEN 'Staten Island'
+        ELSE ae.Borough
+    END AS Borough,
+    COUNT(DISTINCT h.CorrosionRouteSheetID) AS RouteSheetCount
+FROM cedemo_CorrosionRouteSheetHeader h
+JOIN cedemo_CorrosionRSAssignedEmployeeDetails ae
+    ON h.CorrosionRouteSheetID = ae.CorrosionRouteSheetID
+WHERE h.IsActive = 1
+  AND ae.IsDeleted = 0
+  AND YEAR(h.RouteSheetDate) = 2026
+GROUP BY CASE
+        WHEN ae.Borough = 'X' THEN 'Bronx'
+        WHEN ae.Borough = 'M' THEN 'Manhattan'
+        WHEN ae.Borough = 'Q' THEN 'Queens'
+        WHEN ae.Borough = 'W' THEN 'Westchester'
+        WHEN ae.Borough = 'BK (Brooklyn)' THEN 'Brooklyn'
+        WHEN ae.Borough = 'S (Staten Island)' THEN 'Staten Island'
+        ELSE ae.Borough
+    END
+ORDER BY RouteSheetCount DESC;

@@ -1,0 +1,75 @@
+
+User : summarise tunnels routesheet
+User : tell me about tunnels routesheet
+SQL:
+-- Section 1: Employee Count by Work Description
+SELECT WorkDescription, COUNT(DISTINCT EmployeeID) as EmployeeCount 
+FROM cedemo_TunnelsRSAssignedEmployeeDetails aed
+JOIN cedemo_TunnelsRouteSheetHeader h ON aed.TunnelsRouteSheetID = h.TunnelsRouteSheetID
+WHERE aed.IsDeleted = 0 AND h.IsActive = 1 
+  AND CAST(h.RouteSheetDate AS DATE) = '2026-04-09'
+GROUP BY WorkDescription 
+ORDER BY EmployeeCount DESC;
+-- count query
+SELECT COUNT(DISTINCT WorkDescription) as UniqueWorkDescriptions 
+FROM cedemo_TunnelsRSAssignedEmployeeDetails aed
+JOIN cedemo_TunnelsRouteSheetHeader h ON aed.TunnelsRouteSheetID = h.TunnelsRouteSheetID
+WHERE aed.IsDeleted = 0 AND h.IsActive = 1 
+  AND CAST(h.RouteSheetDate AS DATE) = '2026-04-09';
+-- Section 2: Route Sheet Overview Details
+SELECT RouteSheetDate, RouteSheetDay, ShiftData, RouteSheetStatus, 
+       Supervisor1Name,Supervisor2Name, Supervisor3Name, ManagerName, EngineerName, PlannerName 
+FROM cedemo_TunnelsRouteSheetHeader 
+WHERE IsActive = 1 
+  AND CAST(RouteSheetDate AS DATE) = '2026-04-09';
+-- count query
+SELECT COUNT(*) as TotalRouteSheets 
+FROM cedemo_TunnelsRouteSheetHeader 
+WHERE IsActive = 1 
+  AND CAST(RouteSheetDate AS DATE) = '2026-04-09';
+-- Section 3: OQ Exceptions (Operator Qualification)
+SELECT EmployeeName as OQExceptionCrew , WorkDescription, MissingCoveredTasks, 
+       QualificationValidatedDate, WorkLocation 
+FROM cedemo_TunnelsRSAssignedEmployeeDetails aed
+JOIN cedemo_TunnelsRouteSheetHeader h ON aed.TunnelsRouteSheetID = h.TunnelsRouteSheetID
+WHERE aed.IsDeleted = 0 AND aed.Qualified = 'No' AND h.IsActive = 1
+  AND CAST(h.RouteSheetDate AS DATE) = '2026-04-09'
+ORDER BY EmployeeName;
+-- count query
+SELECT COUNT(DISTINCT EmployeeID) as OQExceptionCount 
+FROM cedemo_TunnelsRSAssignedEmployeeDetails aed
+JOIN cedemo_TunnelsRouteSheetHeader h ON aed.TunnelsRouteSheetID = h.TunnelsRouteSheetID
+WHERE aed.IsDeleted = 0 AND aed.Qualified = 'No' AND h.IsActive = 1
+  AND CAST(h.RouteSheetDate AS DATE) = '2026-04-09';
+-- Section 4: DISA Exceptions
+SELECT EmployeeName as DISAExceptionCrew , WorkDescription, WorkLocation, SupervisorName 
+FROM cedemo_TunnelsRSAssignedEmployeeDetails aed
+JOIN cedemo_TunnelsRouteSheetHeader h ON aed.TunnelsRouteSheetID = h.TunnelsRouteSheetID
+WHERE aed.IsDeleted = 0 
+  AND (aed.EmployeeDISAPool IS NULL OR aed.EmployeeDISAPool = '') 
+  AND h.IsActive = 1
+  AND CAST(h.RouteSheetDate AS DATE) = '2026-04-09'
+ORDER BY EmployeeName;
+-- count query
+SELECT COUNT(DISTINCT EmployeeID) as DISAExceptionCount 
+FROM cedemo_TunnelsRSAssignedEmployeeDetails aed
+JOIN cedemo_TunnelsRouteSheetHeader h ON aed.TunnelsRouteSheetID = h.TunnelsRouteSheetID
+WHERE aed.IsDeleted = 0 
+  AND (aed.EmployeeDISAPool IS NULL OR aed.EmployeeDISAPool = '') 
+  AND h.IsActive = 1
+  AND CAST(h.RouteSheetDate AS DATE) = '2026-04-09';
+-- Section 5: Employee Leave Details
+SELECT EmployeeName, ITSID, ReasonForAbsence, Comments 
+FROM cedemo_TunnelsRSLeaveEmployeeDetails led
+JOIN cedemo_TunnelsRouteSheetHeader h ON led.TunnelsRouteSheetID = h.TunnelsRouteSheetID
+WHERE led.IsDeleted = 0 AND h.IsActive = 1
+  AND CAST(h.RouteSheetDate AS DATE) = '2026-04-09'
+ORDER BY EmployeeName;
+-- count query
+SELECT COUNT(DISTINCT EmployeeID) as EmployeesOnLeave 
+FROM cedemo_TunnelsRSLeaveEmployeeDetails led
+JOIN cedemo_TunnelsRouteSheetHeader h ON led.TunnelsRouteSheetID = h.TunnelsRouteSheetID
+WHERE led.IsDeleted = 0 AND h.IsActive = 1
+  AND CAST(h.RouteSheetDate AS DATE) = '2026-04-09';
+
+
